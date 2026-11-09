@@ -4,8 +4,8 @@ const en = {
   langLabel: 'English',
 
   // App
-  appName: 'CPI Analytics',
-  appTagline: 'Customer Intelligence Platform',
+  appName: 'Fraud Detection',
+  appTagline: 'Banking Risk & Fraud Detection System',
   logout: 'Logout',
   language: 'Language',
 
@@ -138,7 +138,7 @@ const en = {
 
   // Login
   login_title: 'Login',
-  login_subtitle: 'Sign in to Machine Learning Analytics',
+  login_subtitle: 'Sign in to Fraud Detection System',
   login_username: 'Username',
   login_password: 'Password',
   login_button: 'Login',
@@ -149,7 +149,7 @@ const en = {
   login_portal_title: 'Login Page',
   login_portal_desc: 'Sign in with your registered account to manage Machine Learning analytics.',
   login_hero_badge: 'AnvAIa Analytics ➔ Bank Artha Graha Customer Portal',
-  login_hero_title: 'AnvAIa Analytics',
+  login_hero_title: 'Fraud Detection',
   login_hero_title_highlight: 'Machine Learning Portal',
   login_hero_desc: 'Customer portfolio intelligence analytics portal powered by Machine Learning & AI for Customer Segmentation, churn prediction, and personalized recommendations.',
   login_pipeline_title: 'PORTFOLIO ANALYSIS PIPELINE',
@@ -174,7 +174,7 @@ const en = {
   login_version_tag: 'v2.5.0 Production',
 
   // Global footer
-  footer_text: 'Customer Intelligence Platform',
+  footer_text: 'Banking Fraud Detection & Prevention System',
 };
 
 export default en;

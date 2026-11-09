@@ -4,8 +4,8 @@ const id = {
   langLabel: 'Bahasa Indonesia',
 
   // App
-  appName: 'CPI Analytics',
-  appTagline: 'Customer Intelligence Platform',
+  appName: 'Fraud Detection',
+  appTagline: 'Banking Risk & Fraud Detection System',
   logout: 'Keluar',
   language: 'Bahasa',
 
@@ -138,7 +138,7 @@ const id = {
 
   // Login
   login_title: 'Login',
-  login_subtitle: 'Masuk ke Machine Learning Analytics',
+  login_subtitle: 'Masuk ke Fraud Detection System',
   login_username: 'Username',
   login_password: 'Password',
   login_button: 'Login',
@@ -149,7 +149,7 @@ const id = {
   login_portal_title: 'Halaman Login',
   login_portal_desc: 'Masuk menggunakan akun terdaftar untuk mengelola analitik Machine Learning.',
   login_hero_badge: 'AnvAIa Analytics ➔ Bank Artha Graha Customer Portal',
-  login_hero_title: 'AnvAIa Analytics',
+  login_hero_title: 'Fraud Detection',
   login_hero_title_highlight: 'Machine Learning Portal',
   login_hero_desc: 'Portal analitik kecerdasan portofolio nasabah berbasis Machine Learning & AI untuk Customer Segmentation, prediksi churn, dan rekomendasi personalisasi.',
   login_pipeline_title: 'ALUR ANALISIS PORTOFOLIO',
@@ -174,7 +174,7 @@ const id = {
   login_version_tag: 'v2.5.0 Production',
 
   // Global footer
-  footer_text: 'Platform Kecerdasan Nasabah',
+  footer_text: 'Sistem Pemantauan & Deteksi Fraud Perbankan',
 };
 
 export default id;

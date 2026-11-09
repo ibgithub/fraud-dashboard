@@ -200,11 +200,11 @@ function MenuItem({ menu, isCollapsed, setIsCollapsed, expandedKey, toggleAccord
               toggleAccordion(menu.key);
             }
           }}
-          className={`w-full flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'} gap-3 px-3 py-2.5 rounded-xl transition text-xs font-semibold ${isParentActive ? 'bg-gradient-to-r from-[#D4AF37] via-[#C9A24B] to-[#8A6534] text-[#24190D] font-black shadow-md shadow-[#C9A24B]/30' : 'text-[#EDE3D2] hover:bg-[#4E3A22] hover:text-white'}`}
+          className={`w-full flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'} gap-3 px-3 py-2.5 rounded-xl transition text-xs font-semibold ${isParentActive ? 'bg-gradient-to-r from-[#028DAA] via-[#0E7490] to-[#1E4B75] text-white font-bold shadow-md shadow-[#028DAA]/35' : 'text-[#CFE8EE] hover:bg-[#1A4A78] hover:text-white'}`}
           title={isCollapsed ? label : ''}
         >
           <div className="flex items-center gap-3 truncate">
-            <Icon className={`w-4 h-4 shrink-0 ${isParentActive ? 'text-[#24190D]' : 'text-[#E0B458]'}`} />
+            <Icon className={`w-4 h-4 shrink-0 ${isParentActive ? 'text-white' : 'text-[#22D3EE]'}`} />
             {!isCollapsed && <span className="truncate">{label}</span>}
           </div>
           {!isCollapsed && (isExpanded ? <ChevronDown className="w-3.5 h-3.5 shrink-0" /> : <ChevronRight className="w-3.5 h-3.5 shrink-0" />)}
@@ -212,23 +212,23 @@ function MenuItem({ menu, isCollapsed, setIsCollapsed, expandedKey, toggleAccord
       ) : (
         <Link
           to={menu.path}
-          className={`w-full flex items-center ${isCollapsed ? 'justify-center' : 'justify-start'} gap-3 px-3 py-2.5 rounded-xl transition text-xs font-semibold ${isSingleActive ? 'bg-gradient-to-r from-[#D4AF37] via-[#C9A24B] to-[#8A6534] text-[#24190D] font-black shadow-md shadow-[#C9A24B]/30' : 'text-[#EDE3D2] hover:bg-[#4E3A22] hover:text-white'}`}
+          className={`w-full flex items-center ${isCollapsed ? 'justify-center' : 'justify-start'} gap-3 px-3 py-2.5 rounded-xl transition text-xs font-semibold ${isSingleActive ? 'bg-gradient-to-r from-[#028DAA] via-[#0E7490] to-[#1E4B75] text-white font-bold shadow-md shadow-[#028DAA]/35' : 'text-[#CFE8EE] hover:bg-[#1A4A78] hover:text-white'}`}
           title={isCollapsed ? label : ''}
         >
-          <Icon className={`w-4 h-4 shrink-0 ${isSingleActive ? 'text-[#24190D]' : 'text-[#E0B458]'}`} />
+          <Icon className={`w-4 h-4 shrink-0 ${isSingleActive ? 'text-white' : 'text-[#22D3EE]'}`} />
           {!isCollapsed && <span className="truncate">{label}</span>}
         </Link>
       )}
       {hasChildren && !isCollapsed && (
-        <div className="ml-5 border-l-2 border-[#6E512F] pl-2.5 overflow-hidden transition-all duration-300 ease-in-out" style={{ maxHeight: isExpanded ? '500px' : '0px', opacity: isExpanded ? 1 : 0, marginTop: isExpanded ? '4px' : '0px' }}>
+        <div className="ml-5 border-l-2 border-[#1E4F7A] pl-2.5 overflow-hidden transition-all duration-300 ease-in-out" style={{ maxHeight: isExpanded ? '500px' : '0px', opacity: isExpanded ? 1 : 0, marginTop: isExpanded ? '4px' : '0px' }}>
           <div className="space-y-1">
             {menu.children.map((child) => {
               const childLabel = t[child.key] || child.key;
               const isChildActive = effectivePath(location.pathname) === child.path;
               return (
-                <Link key={child.key} to={child.path} className={`group w-full flex items-center justify-start gap-2 px-3 py-2 rounded-lg transition text-xs font-medium ${isChildActive ? 'bg-[#C9A24B]/20 text-[#F3D78A] font-bold border-l-2 border-[#E0B458]' : 'text-[#C9B89A] hover:bg-[#4E3A22] hover:text-white'}`}>
+                <Link key={child.key} to={child.path} className={`group w-full flex items-center justify-start gap-2 px-3 py-2 rounded-lg transition text-xs font-medium ${isChildActive ? 'bg-[#028DAA]/25 text-[#22D3EE] font-bold border-l-2 border-[#22D3EE]' : 'text-[#CFE8EE] hover:bg-[#1A4A78] hover:text-white'}`}>
                   {/* Connector tick linking the item to the vertical guide line. */}
-                  <span className={`h-px w-2 shrink-0 ${isChildActive ? 'bg-[#E0B458]' : 'bg-[#6E512F] group-hover:bg-[#C9B89A]'}`} />
+                  <span className={`h-px w-2 shrink-0 ${isChildActive ? 'bg-[#22D3EE]' : 'bg-[#1E4F7A] group-hover:bg-[#CFE8EE]'}`} />
                   <span className="truncate">{childLabel}</span>
                 </Link>
               );
@@ -346,16 +346,16 @@ export function DashboardLayout() {
   );
 
   return (
-    <div className="flex h-screen bg-[#F4F7F6] font-sans text-[#142826] overflow-hidden">
+    <div className="flex h-screen bg-[#E7F4F6] font-sans text-[#0F2B48] overflow-hidden">
       {/* Sidebar */}
       <aside
         className={`${
           isCollapsed ? 'w-20' : 'w-64'
-        } bg-[#3D2C18] text-white border-r border-[#5A4327] transition-all duration-300 flex flex-col justify-between z-20 shadow-xl overflow-y-auto`}
+        } bg-[#13385E] text-white border-r border-[#1E4F7A] transition-all duration-300 flex flex-col justify-between z-20 shadow-xl overflow-y-auto`}
       >
         <div>
           {/* Brand Header */}
-          <div className="p-3.5 border-b border-[#5A4327]">
+          <div className="p-3.5 border-b border-[#1E4F7A]">
             <div className="flex items-center justify-between">
               {isCollapsed ? (
                 <div className="w-full text-center">
@@ -365,11 +365,11 @@ export function DashboardLayout() {
                 <div className="flex items-center gap-2 truncate">
                   <AnvAILogo variant="icon" size="sm" />
                   <div className="truncate">
-                    <h1 className="text-xs font-black tracking-tight bg-gradient-to-r from-[#F3D78A] via-[#E0B458] to-[#C9A24B] bg-clip-text text-transparent uppercase truncate">
-                      AnvAIa Analytics
+                    <h1 className="text-xs font-black tracking-tight bg-gradient-to-r from-[#38BDF8] via-[#22D3EE] to-[#A5F3FC] bg-clip-text text-transparent uppercase truncate">
+                      Fraud Detection
                     </h1>
-                    <p className="text-[9px] uppercase tracking-widest text-[#EDE3D2] font-bold truncate">
-                      PT Bank Artha Graha
+                    <p className="text-[9px] uppercase tracking-widest text-[#A5D8EA] font-bold truncate">
+                      Banking Risk & Security
                     </p>
                   </div>
                 </div>
@@ -377,7 +377,7 @@ export function DashboardLayout() {
               <button
                 type="button"
                 onClick={() => setIsCollapsed(!isCollapsed)}
-                className="shrink-0 w-8 h-8 flex items-center justify-center rounded-lg hover:bg-[#4E3A22] text-[#EDE3D2] hover:text-white transition"
+                className="shrink-0 w-8 h-8 flex items-center justify-center rounded-lg hover:bg-[#1A4A78] text-[#CFE8EE] hover:text-white transition"
               >
                 {isCollapsed ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
               </button>
@@ -396,11 +396,11 @@ export function DashboardLayout() {
               return (
                 <div key={group.titleId} className={groupIdx > 0 ? 'mt-4' : ''}>
                   {!isCollapsed ? (
-                    <div className="px-2 py-1 text-[10px] font-black uppercase tracking-wider text-[#E0B458]/80 flex items-center justify-between border-b border-[#5A4327]/30 mb-2">
+                    <div className="px-2 py-1 text-[10px] font-black uppercase tracking-wider text-[#22D3EE]/90 flex items-center justify-between border-b border-[#1E4F7A]/50 mb-2">
                       <span>{lang === 'id' ? group.titleId : group.titleEn}</span>
                     </div>
                   ) : (
-                    groupIdx > 0 && <div className="my-2 border-t border-[#5A4327]/40" />
+                    groupIdx > 0 && <div className="my-2 border-t border-[#1E4F7A]/50" />
                   )}
 
                   <div className="space-y-1">
@@ -425,11 +425,11 @@ export function DashboardLayout() {
             {otherItems.length > 0 && (
               <div className="mt-4">
                 {!isCollapsed ? (
-                  <div className="px-2 py-1 text-[10px] font-black uppercase tracking-wider text-[#E0B458]/80 border-b border-[#5A4327]/30 mb-2">
+                  <div className="px-2 py-1 text-[10px] font-black uppercase tracking-wider text-[#22D3EE]/90 border-b border-[#1E4F7A]/50 mb-2">
                     <span>{lang === 'id' ? 'MENU LAINNYA' : 'OTHER MENUS'}</span>
                   </div>
                 ) : (
-                  <div className="my-2 border-t border-[#5A4327]/40" />
+                  <div className="my-2 border-t border-[#1E4F7A]/50" />
                 )}
                 <div className="space-y-1">
                   {otherItems.map((menu) => (
@@ -455,27 +455,27 @@ export function DashboardLayout() {
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Top Header Bar */}
-        <header className="h-16 bg-white border-b border-[#E2D8C9] px-6 flex items-center justify-between z-10 shrink-0 shadow-xs">
+        <header className="h-16 bg-white border-b border-[#CFE8EE] px-6 flex items-center justify-between z-10 shrink-0 shadow-xs">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2 text-xs text-[#7A6A55]">
-              <Building2 className="w-4 h-4 text-[#6B4E2E]" />
-              <span className="font-semibold text-[#2A2018]">
-                PT Bank Artha Graha Internasional
+              <Building2 className="w-4 h-4 text-[#028DAA]" />
+              <span className="font-semibold text-[#0F2B48]">
+                Banking Risk & Security
               </span>
               <span className="text-[#E2D8C9]">/</span>
-              <span className="text-[#6B4E2E] font-bold">AnvAIa Analytics Dashboard</span>
+              <span className="text-[#2E7D32] font-bold">SNAP BI Payment & Admin Portal</span>
             </div>
           </div>
 
           {/* Language Switcher + User Profile */}
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 bg-[#FAF7F2] p-1.5 rounded-xl border border-[#E2D8C9]">
+            <div className="flex items-center gap-2 bg-[#F0F7F9] p-1.5 rounded-xl border border-[#CFE8EE]">
               <button
                 type="button"
                 onClick={() => setLang('id')}
                 className={`p-1.5 rounded-lg flex items-center gap-1.5 transition-all ${
                   lang === 'id'
-                    ? 'bg-[#6B4E2E] text-white shadow-xs ring-1 ring-[#6B4E2E]'
+                    ? 'bg-[#028DAA] text-white shadow-xs ring-1 ring-[#028DAA]'
                     : 'hover:bg-white text-[#7A6A55]'
                 }`}
                 title="Bahasa Indonesia"
@@ -492,7 +492,7 @@ export function DashboardLayout() {
                 onClick={() => setLang('en')}
                 className={`p-1.5 rounded-lg flex items-center gap-1.5 transition-all ${
                   lang === 'en'
-                    ? 'bg-[#6B4E2E] text-white shadow-xs ring-1 ring-[#6B4E2E]'
+                    ? 'bg-[#028DAA] text-white shadow-xs ring-1 ring-[#028DAA]'
                     : 'hover:bg-white text-[#7A6A55]'
                 }`}
                 title="English (UK)"
@@ -511,17 +511,17 @@ export function DashboardLayout() {
               </button>
             </div>
 
-            <div className="relative pl-2 border-l border-[#E2D8C9]" ref={profileRef}>
+            <div className="relative pl-2 border-l border-[#CFE8EE]" ref={profileRef}>
               <button
                 type="button"
                 onClick={() => setProfileOpen((v) => !v)}
-                className="flex items-center gap-2 rounded-lg px-1.5 py-1 hover:bg-[#FAF7F2] transition"
+                className="flex items-center gap-2 rounded-lg px-1.5 py-1 hover:bg-[#F0F7F9] transition"
               >
-                <div className="w-8 h-8 rounded-full bg-[#6B4E2E] text-white flex items-center justify-center font-bold text-xs shadow-xs">
+                <div className="w-8 h-8 rounded-full bg-[#028DAA] text-white flex items-center justify-center font-bold text-xs shadow-xs">
                   {(currentUser.username || 'A').charAt(0).toUpperCase()}
                 </div>
                 <div className="hidden sm:block text-left">
-                  <div className="text-xs font-bold text-[#2A2018] leading-tight">
+                  <div className="text-xs font-bold text-[#0F2B48] leading-tight">
                     {currentUser.username}
                   </div>
                   <div className="text-[10px] text-[#7A6A55] font-medium">
@@ -532,32 +532,32 @@ export function DashboardLayout() {
               </button>
 
               {profileOpen && (
-                <div className="absolute right-0 mt-2 w-56 bg-white border border-[#E2D8C9] rounded-xl shadow-lg py-1 z-50">
+                <div className="absolute right-0 mt-2 w-56 bg-white border border-[#CFE8EE] rounded-xl shadow-lg py-1 z-50">
                   {/* User summary */}
-                  <div className="px-3 py-2 border-b border-[#F0EAE0]">
-                    <div className="text-xs font-bold text-[#2A2018]">{currentUser.username}</div>
+                  <div className="px-3 py-2 border-b border-[#CFE8EE]">
+                    <div className="text-xs font-bold text-[#0F2B48]">{currentUser.username}</div>
                     <div className="text-[10px] text-[#7A6A55]">{displayName}</div>
                   </div>
 
                   <button
                     type="button"
                     onClick={() => { setProfileOpen(false); navigate('/system/profile'); }}
-                    className="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-[#2A2018] hover:bg-[#FAF7F2] transition text-left"
+                    className="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-[#0F2B48] hover:bg-[#F0F7F9] transition text-left"
                   >
-                    <User className="w-4 h-4 text-[#6B4E2E]" />
+                    <User className="w-4 h-4 text-[#028DAA]" />
                     <span>{t.menu_sys_01 || 'User Profile'}</span>
                   </button>
 
                   <button
                     type="button"
                     onClick={() => { setProfileOpen(false); navigate('/system/change-password'); }}
-                    className="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-[#2A2018] hover:bg-[#FAF7F2] transition text-left"
+                    className="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-[#0F2B48] hover:bg-[#F0F7F9] transition text-left"
                   >
-                    <Lock className="w-4 h-4 text-[#6B4E2E]" />
+                    <Lock className="w-4 h-4 text-[#028DAA]" />
                     <span>{t.menu_sys_03 || 'Change Password'}</span>
                   </button>
 
-                  <div className="my-1 border-t border-[#F0EAE0]"></div>
+                  <div className="my-1 border-t border-[#CFE8EE]"></div>
 
                   <button
                     type="button"
@@ -574,7 +574,7 @@ export function DashboardLayout() {
         </header>
 
         {/* Page Content Outlet */}
-        <main className="flex-1 overflow-auto px-4 sm:px-6 lg:px-8 pb-4 sm:pb-6 lg:pb-8 pt-1 bg-[#F7F4EF]">
+        <main className="flex-1 overflow-auto px-4 sm:px-6 lg:px-8 pb-4 sm:pb-6 lg:pb-8 pt-1 bg-[#E7F4F6]">
           <div className="max-w-7xl mx-auto flex flex-col min-h-full">
             <div className="flex-1">
               <Outlet />
