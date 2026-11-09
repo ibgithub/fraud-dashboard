@@ -1,0 +1,47 @@
+server:
+  port: 9092
+
+spring:
+  application:
+    name: analytics-service
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://${EXEC_DB_HOST:${DB_HOST:127.0.0.1}}:${EXEC_DB_PORT:${DB_PORT:5432}}/${EXEC_DB_NAME:altair_demo}}
+    username: ${EXEC_DB_USER:${DB_USER}}
+    password: ${EXEC_DB_PASSWORD:${DB_PASSWORD}}
+
+# Secondary, READ-ONLY datasource for the bag_demo pilot (Customer Matrix).
+bag:
+  datasource:
+    url: ${BAG_DB_URL:jdbc:postgresql://${BAG_DB_HOST:${EXEC_DB_HOST:${DB_HOST:127.0.0.1}}}:${BAG_DB_PORT:${EXEC_DB_PORT:${DB_PORT:5432}}}/${BAG_DB_NAME:bag_demo}}
+    username: ${BAG_DB_USER:${EXEC_DB_USER:${DB_USER}}}
+    password: ${BAG_DB_PASSWORD:${EXEC_DB_PASSWORD:${DB_PASSWORD}}}
+    hikari:
+      maximum-pool-size: ${BAG_DB_POOL_MAX:2}
+      minimum-idle: ${BAG_DB_POOL_MIN:0}
+      read-only: true
+      pool-name: bag-demo-pool
+
+jwt:
+  secret: ${JWT_SECRET}
+  expiration: ${JWT_EXPIRATION:28800000} # 8 jam
+springdoc:
+  # Swagger disabled in prod.
+  api-docs:
+    enabled: ${SWAGGER_ENABLED:false}
+    path: /api-docs
+  swagger-ui:
+    enabled: ${SWAGGER_ENABLED:false}
+    path: /swagger
+    operationsSorter: method
+    tagsSorter: alpha
+    display-request-duration: true
+
+cors:
+  allowed-origins: ${CORS_ALLOWED_ORIGINS}
+
+logging:
+  file:
+    name: /home/oper/dashboard/backend/logs/auth-service.log
+  level:
+    com.ib.auth: INFO
+    org.springframework.web: WARN

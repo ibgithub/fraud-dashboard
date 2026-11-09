@@ -1,0 +1,23 @@
+{{define "content"}}
+{{if .Error}}<div class="banner err">Gagal membaca data: {{.Error}}</div>{{end}}
+<form method="get" action="/admin" class="searchbar">
+  <input type="text" name="q" value="{{.Search}}" placeholder="Cari CIF / nama nasabah...">
+  <button type="submit">Cari</button>
+</form>
+<p class="sub">Total: <b>{{.Total}}</b> nasabah{{if .Search}} (hasil pencarian "{{.Search}}"){{end}}</p>
+{{if not .Rows}}
+  <p class="empty">Belum ada data. Buka menu <b>Upload CSV</b> untuk mengimpor.</p>
+{{else}}
+  <div class="tablewrap"><table><thead><tr>
+    <th>CIF</th><th>Nama Nasabah</th><th>Alamat</th><th>Title</th></tr></thead><tbody>
+    {{range .Rows}}<tr><td class="mono">{{.Cif}}</td><td>{{.Name}}</td><td>{{.Address}}</td><td>{{.Title}}</td></tr>{{end}}
+  </tbody></table></div>
+  {{if gt .TotalPages 1}}
+    <div class="pager">
+      {{if gt .Page 1}}<a href="/admin?page={{.PrevPage}}{{.QueryTail}}">« Sebelumnya</a>{{end}}
+      <span>Halaman {{.Page}} / {{.TotalPages}}</span>
+      {{if lt .Page .TotalPages}}<a href="/admin?page={{.NextPage}}{{.QueryTail}}">Berikutnya »</a>{{end}}
+    </div>
+  {{end}}
+{{end}}
+{{end}}

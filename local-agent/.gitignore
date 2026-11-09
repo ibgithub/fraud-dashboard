@@ -1,0 +1,30 @@
+# Compiled binaries — built per-platform, not committed.
+local-agent.exe
+local-agent
+*.exe
+*.exe~
+
+# Per-machine runtime config (auto-generated next to the exe) — not committed.
+config.ini
+
+# Runtime logs (rotating) — not committed.
+logs/
+*.log
+
+# Local SQLite database (holds customer PII) — never commit.
+pii.db
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+# Test artifacts (generated ZIPs are large binaries, not committed)
+testdata/*.zip
+testdata/*.db
+*.zip
+
+# Real / large data must never be committed (only demo_sample.csv is tracked).
+cif_pii.csv
+cif_pii_prod.csv
+data.csv
+demo_dummy.csv

@@ -1,0 +1,94 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: analytics-service
+  datasource:
+    # DB user/password must come from environment (no hardcoded defaults).
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://${EXEC_DB_HOST:${DB_HOST:127.0.0.1}}:${EXEC_DB_PORT:${DB_PORT:5432}}/${EXEC_DB_NAME:altair_demo}}
+    username: ${EXEC_DB_USER:${DB_USER}}
+    password: ${EXEC_DB_PASSWORD:${DB_PASSWORD}}
+    hikari:
+      # The RDS instance is small and shared. Keep each pod's pool tiny so that
+      # replicas + rolling updates don't exhaust RDS connection slots
+      # (FATAL: remaining connection slots are reserved for "rds_reserved").
+      maximum-pool-size: ${DB_POOL_MAX:3}
+      minimum-idle: ${DB_POOL_MIN:1}
+  flyway:
+    enabled: true
+    schemas: churn
+    default-schema: churn
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    baseline-version: 0
+    # Don't fail if an already-applied migration's checksum changed (V4 was made
+    # idempotent). We never clean; migrations are forward-only here.
+    validate-on-migrate: false
+
+# Secondary, READ-ONLY datasource for the bag_demo pilot (Customer Matrix).
+# Host/port/user/password default to the same RDS as the primary; only the
+# database name differs (bag_demo). Pool kept very small. This is a top-level
+# section (NOT under spring:) read by DataSourceConfig via @ConfigurationProperties.
+bag:
+  datasource:
+    url: ${BAG_DB_URL:jdbc:postgresql://${BAG_DB_HOST:${EXEC_DB_HOST:${DB_HOST:127.0.0.1}}}:${BAG_DB_PORT:${EXEC_DB_PORT:${DB_PORT:5432}}}/${BAG_DB_NAME:bag_demo}}
+    username: ${BAG_DB_USER:${EXEC_DB_USER:${DB_USER}}}
+    password: ${BAG_DB_PASSWORD:${EXEC_DB_PASSWORD:${DB_PASSWORD}}}
+    hikari:
+      maximum-pool-size: ${BAG_DB_POOL_MAX:2}
+      minimum-idle: ${BAG_DB_POOL_MIN:0}
+      read-only: true
+      pool-name: bag-demo-pool
+
+jwt:
+  # No default: must be provided via environment (same secret as auth-service).
+  secret: ${JWT_SECRET}
+  expiration: ${JWT_EXPIRATION:28800000} # 8 jam
+springdoc:
+  # Swagger/OpenAPI disabled by default; enable only in non-prod via env.
+  api-docs:
+    enabled: ${SWAGGER_ENABLED:false}
+    path: /api-docs
+  swagger-ui:
+    enabled: ${SWAGGER_ENABLED:false}
+    path: /swagger
+    operationsSorter: method
+    tagsSorter: alpha
+    display-request-duration: true
+
+cors:
+  allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173,http://localhost:3000}
+
+# Spring Boot Admin client registration. Disabled by default (local dev);
+# enabled in the cluster via SBA_CLIENT_ENABLED=true + SBA_URL pointing at the
+# admin-server service. The admin server scrapes this app's /actuator endpoints
+# over the internal cluster network only (not exposed via the ALB ingress).
+spring.boot.admin.client:
+  enabled: ${SBA_CLIENT_ENABLED:false}
+  url: ${SBA_URL:http://localhost:8083/admin}
+  username: ${SBA_USER:admin}
+  password: ${SBA_PASSWORD:admin}
+  instance:
+    service-base-url: ${SBA_INSTANCE_BASE_URL:http://analytics-service:8082}
+
+# Actuator: health (for k8s probes) plus endpoints the admin dashboard displays.
+# These are reachable only inside the cluster; the ingress never routes /actuator.
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,env,loggers,mappings,beans,threaddump
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: when-authorized
+  info:
+    env:
+      enabled: true
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true

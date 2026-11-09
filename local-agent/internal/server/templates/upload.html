@@ -1,0 +1,12 @@
+{{define "content"}}
+<p class="sub">Upload file ZIP berpassword (berisi CSV cif + nama). Data baru akan ditambahkan; data dengan CIF yang sudah ada akan diperbarui. Data lama tidak dihapus.</p>
+{{if .Banner}}<div class="banner {{.BannerClass}}">{{.Banner}}</div>{{end}}
+<form method="post" action="/admin/import" enctype="multipart/form-data">
+  <label>File ZIP (berpassword)</label>
+  <input type="file" name="file" accept=".zip" required>
+  <label>Password</label>
+  <input type="password" name="password" autocomplete="off" placeholder="Password">
+  <button type="submit">Upload &amp; Perbarui Data</button>
+</form>
+<div class="meta">Total data saat ini: <b>{{.Count}}</b> nasabah<br>Impor terakhir: <b>{{.LastFile}}</b> (<b>{{.LastRows}}</b> baris) pada <b>{{.LastAt}}</b></div>
+{{end}}

@@ -1,0 +1,40 @@
+server:
+  port: 8083
+  # Serve the whole app (UI + API) under /admin so the ALB can route /admin -> here.
+  servlet:
+    context-path: /admin
+  # Behind the ALB; honour X-Forwarded-* so login redirects use the public host.
+  forward-headers-strategy: framework
+
+spring:
+  application:
+    name: admin-server
+  boot:
+    admin:
+      # The UI/base path within the context-path.
+      context-path: /
+      ui:
+        title: AnvAIa Monitoring
+
+# Credentials for the SBA login page. Override via env in production.
+admin:
+  security:
+    user: ${ADMIN_USER:admin}
+    password: ${ADMIN_PASSWORD:admin}
+
+# Expose health so Kubernetes probes work on the admin server itself.
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: never
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true

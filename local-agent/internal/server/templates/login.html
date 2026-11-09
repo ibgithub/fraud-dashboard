@@ -1,0 +1,34 @@
+{{define "login"}}<!doctype html>
+<html lang="id"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Masuk — Local Agent</title>
+<style>
+  body{font-family:system-ui,Segoe UI,Arial,sans-serif;background:#3d2c18;color:#142826;margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center}
+  .login-wrap{width:100%;max-width:380px;padding:20px}
+  .login-card{background:#fff;border-radius:16px;padding:32px 28px;box-shadow:0 10px 40px rgba(0,0,0,.3)}
+  .login-brand{font-size:22px;font-weight:800;color:#6b4e2e;text-align:center}
+  .login-sub{color:#7a6a55;font-size:13px;text-align:center;margin:6px 0 20px}
+  label{display:block;font-size:12px;font-weight:600;color:#6b4e2e;margin:14px 0 6px}
+  input{width:100%;box-sizing:border-box;padding:11px;border:1px solid #d8cdbb;border-radius:8px;font-size:14px}
+  input:focus{outline:none;border-color:#8a6534}
+  button{margin-top:22px;width:100%;padding:12px 18px;background:#8a6534;color:#fff;border:0;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer}
+  button:hover{background:#6f5029}
+  .banner{padding:10px 12px;border-radius:8px;font-size:13px;margin-bottom:4px}
+  .banner.err{background:#fef2f2;color:#991b1b;border:1px solid #fecaca}
+</style></head>
+<body>
+<div class="login-wrap">
+  <div class="login-card">
+    <div class="login-brand">Local Agent</div>
+    <p class="login-sub">Masuk dengan akun AnvAIa Analytics Anda.</p>
+    {{if .Error}}<div class="banner err">{{.Error}}</div>{{end}}
+    <form method="post" action="/login">
+      <label>Username</label>
+      <input type="text" name="username" value="{{.Username}}" autocomplete="username" autofocus required>
+      <label>Password</label>
+      <input type="password" name="password" autocomplete="current-password" required>
+      <button type="submit">Masuk</button>
+    </form>
+  </div>
+</div>
+</body></html>{{end}}

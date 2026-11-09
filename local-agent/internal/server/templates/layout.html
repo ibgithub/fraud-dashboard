@@ -1,0 +1,54 @@
+{{define "layout"}}<!doctype html>
+<html lang="id"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Local Agent</title>
+<style>
+  body{font-family:system-ui,Segoe UI,Arial,sans-serif;background:#f4f7f6;color:#142826;margin:0;padding:0 0 40px}
+  .nav{background:#3d2c18;padding:0 24px;display:flex;gap:4px;align-items:center}
+  .nav-link{color:#ede3d2;text-decoration:none;font-size:14px;font-weight:600;padding:14px 16px;display:inline-block}
+  .nav-link:hover{background:#4e3a22;color:#fff}
+  .nav-link.active{color:#fff;border-bottom:3px solid #e0b458}
+  .nav-user{margin-left:auto;display:flex;align-items:center;gap:12px;padding-right:4px}
+  .nav-who{color:#ede3d2;font-size:13px;font-weight:600}
+  .nav-logout{color:#e0b458;text-decoration:none;font-size:13px;font-weight:700;padding:6px 12px;border:1px solid #6b5230;border-radius:6px}
+  .nav-logout:hover{background:#4e3a22;color:#fff}
+  .card{max-width:900px;margin:24px auto;background:#fff;border:1px solid #e2d8c9;border-radius:14px;padding:24px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+  h1{font-size:18px;margin:0 0 12px}
+  p.sub{color:#7a6a55;font-size:13px;margin:0 0 16px}
+  p.empty{color:#9b8c76;font-size:14px;font-style:italic;padding:24px 0;text-align:center}
+  label{display:block;font-size:12px;font-weight:600;color:#6b4e2e;margin:14px 0 6px}
+  input[type=file],input[type=password]{width:100%;box-sizing:border-box;padding:10px;border:1px solid #d8cdbb;border-radius:8px;font-size:14px}
+  button{margin-top:18px;padding:11px 18px;background:#8a6534;color:#fff;border:0;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer}
+  button:hover{background:#6f5029}
+  form button{width:100%}
+  .meta{margin-top:18px;padding-top:14px;border-top:1px solid #eee;font-size:12px;color:#7a6a55}
+  .meta b{color:#142826}
+  .banner{padding:10px 12px;border-radius:8px;font-size:13px;margin-bottom:16px}
+  .banner.ok{background:#ecfdf5;color:#065f46;border:1px solid #a7f3d0}
+  .banner.err{background:#fef2f2;color:#991b1b;border:1px solid #fecaca}
+  .searchbar{display:flex;gap:8px;margin-bottom:12px}
+  .searchbar input{flex:1;padding:9px 12px;border:1px solid #d8cdbb;border-radius:8px;font-size:14px}
+  .searchbar button{margin:0}
+  .tablewrap{overflow-x:auto;border:1px solid #eee;border-radius:10px}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{background:#faf7f2;text-align:left;padding:10px 12px;color:#6b4e2e;font-size:11px;text-transform:uppercase;letter-spacing:.03em;border-bottom:1px solid #eee}
+  td{padding:10px 12px;border-bottom:1px solid #f1f1f1}
+  tr:hover td{background:#faf9f6}
+  td.mono{font-family:ui-monospace,Consolas,monospace;color:#555}
+  .pager{display:flex;gap:14px;align-items:center;justify-content:center;margin-top:16px;font-size:13px}
+  .pager a{color:#8a6534;text-decoration:none;font-weight:600}
+  .pager a:hover{text-decoration:underline}
+  .pager span{color:#7a6a55}
+</style></head>
+<body>
+<div class="nav">
+  <a class="nav-link {{if eq .Active "customers"}}active{{end}}" href="/admin">Daftar Nasabah</a>
+  <a class="nav-link {{if eq .Active "upload"}}active{{end}}" href="/admin/upload">Upload CSV</a>
+  <a class="nav-link {{if eq .Active "history"}}active{{end}}" href="/admin/history">History Upload</a>
+  {{if .User}}<div class="nav-user"><span class="nav-who">{{.User}}</span><a class="nav-logout" href="/logout">Keluar</a></div>{{end}}
+</div>
+<div class="card">
+  <h1>{{.Title}}</h1>
+  {{block "content" .}}{{end}}
+</div>
+</body></html>{{end}}

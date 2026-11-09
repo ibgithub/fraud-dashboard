@@ -1,0 +1,14 @@
+@import 'tailwindcss' source(none);
+@source '../**/*.{js,ts,jsx,tsx}';
+
+@import 'tw-animate-css';
+
+/* Hide scrollbars (used by horizontally-scrollable tab bars). Keeps scrolling
+   functional while removing the visible scrollbar across browsers. */
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE/old Edge */
+  scrollbar-width: none;    /* Firefox */
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;            /* Chrome/Safari/WebKit */
+}

@@ -1,0 +1,62 @@
+# ALB Ingress (requires AWS Load Balancer Controller installed on the cluster).
+# Path routing:
+#   /api/v1/executive/*  -> analytics-service
+#   /api/*               -> auth-service
+#   /*                   -> frontend
+#
+# NOTE: On EKS Fargate the ALB must use target-type: ip (set below).
+#
+# HTTP-only variant (no custom domain / ACM cert yet). Accessed via the ALB's
+# DNS name over http://. To enable HTTPS later:
+#   1. Get an ACM certificate for your domain in ap-southeast-3.
+#   2. Add back a `host:` under rules, set listen-ports to include HTTPS:443,
+#      add `alb.ingress.kubernetes.io/certificate-arn` and `ssl-redirect: '443'`.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: anvaia-ingress
+  namespace: anvaia
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80}]'
+    alb.ingress.kubernetes.io/healthcheck-protocol: HTTP
+    alb.ingress.kubernetes.io/target-group-attributes: deregistration_delay.timeout_seconds=30
+    alb.ingress.kubernetes.io/load-balancer-attributes: routing.http.drop_invalid_header_fields.enabled=true
+spec:
+  ingressClassName: alb
+  rules:
+    - http:
+        paths:
+          # Spring Boot Admin monitoring dashboard (login-protected).
+          - path: /admin
+            pathType: Prefix
+            backend:
+              service:
+                name: admin-server
+                port:
+                  number: 8083
+          # Most specific first: analytics endpoints.
+          - path: /api/v1/executive
+            pathType: Prefix
+            backend:
+              service:
+                name: analytics-service
+                port:
+                  number: 8082
+          # All other /api -> auth-service.
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: auth-service
+                port:
+                  number: 8081
+          # Everything else -> SPA frontend.
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 80

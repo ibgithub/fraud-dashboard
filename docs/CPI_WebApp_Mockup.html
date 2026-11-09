@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CPI Analytics — Mockup Interaktif (Tahap-01)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{
+  --navy:#1F3864; --navy-2:#2A4A80; --navy-d:#162A4C;
+  --terra:#B4522E; --terra-l:#D9743F;
+  --bg:#F7F5F0; --panel:#FFFFFF; --panel-2:#FBFAF7;
+  --ink:#23211C; --muted:#6B6862; --hint:#9A968E; --line:#E7E3DA;
+  --green:#1D9E75; --green-bg:#E3F4ED; --amber:#BA7517; --amber-bg:#FBF0DC;
+  --red:#C0392B; --red-bg:#FBEBE9; --blue:#2A6FB0;
+  --radius:10px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{
+  font-family:"Plus Jakarta Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  background:var(--bg); color:var(--ink); font-size:14px; line-height:1.55;
+}
+code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+button{font-family:inherit;cursor:pointer}
+a{color:var(--terra);text-decoration:none}
+
+/* ---------- shell ---------- */
+#app{display:grid;grid-template-columns:248px 1fr;grid-template-rows:auto 1fr;height:100vh;grid-template-areas:"side head" "side main"}
+#sidebar{grid-area:side;background:var(--navy);color:#DCE3F0;overflow-y:auto;display:flex;flex-direction:column}
+.brand{padding:18px 18px 14px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,.08)}
+.brand .logo{width:34px;height:34px;border-radius:8px;background:var(--terra);color:#fff;display:grid;place-items:center;font-weight:700;font-size:15px}
+.brand b{font-weight:600;font-size:15px;color:#fff;letter-spacing:.2px}
+.brand span{display:block;font-size:11px;color:#9DB0D0;font-weight:400}
+.navgrp{padding:8px 10px 2px}
+.navgrp .glabel{font-size:11px;text-transform:uppercase;letter-spacing:.7px;color:#7E93BC;padding:10px 10px 4px;font-weight:600}
+.navitem{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;color:#C6D2E8;font-size:13.5px;font-weight:500;border:none;background:none;width:100%;text-align:left}
+.navitem:hover{background:var(--navy-2);color:#fff}
+.navitem.active{background:var(--terra);color:#fff}
+.navitem .ico{width:16px;text-align:center;opacity:.9;font-size:13px}
+.navitem .pill{margin-left:auto;font-size:10px;background:rgba(255,255,255,.16);padding:1px 6px;border-radius:10px}
+.navsub{padding-left:14px}
+.navsub .navitem{font-size:12.5px;color:#AEBBD6;padding:6px 10px}
+.sidefoot{margin-top:auto;padding:14px 16px;font-size:11px;color:#7E93BC;border-top:1px solid rgba(255,255,255,.08)}
+
+/* ---------- header ---------- */
+#header{grid-area:head;background:var(--panel);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:14px;padding:10px 20px;flex-wrap:wrap}
+.hsearch{flex:1;min-width:160px;max-width:340px;position:relative}
+.hsearch input{width:100%;padding:8px 12px 8px 32px;border:1px solid var(--line);border-radius:20px;background:var(--panel-2);font-size:13px}
+.hsearch .si{position:absolute;left:11px;top:8px;color:var(--hint)}
+.hctl{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
+.hctl label{font-size:11px;color:var(--hint);font-weight:600}
+select,input[type=text],input[type=number],input[type=password],textarea{font-family:inherit;font-size:13px;border:1px solid var(--line);border-radius:8px;padding:7px 9px;background:#fff;color:var(--ink)}
+select:disabled{background:#F0EEE8;color:var(--hint)}
+.databadge{font-size:11px;color:var(--muted);background:var(--panel-2);border:1px solid var(--line);border-radius:8px;padding:5px 9px}
+.roleswitch{display:flex;border:1px solid var(--line);border-radius:20px;overflow:hidden}
+.roleswitch button{border:none;background:#fff;padding:6px 12px;font-size:12px;font-weight:600;color:var(--muted)}
+.roleswitch button.on{background:var(--navy);color:#fff}
+.bell{position:relative;color:var(--muted);background:var(--panel-2);border:1px solid var(--line);border-radius:8px;padding:6px 9px;font-size:14px}
+.bell .dot{position:absolute;top:2px;right:2px;width:8px;height:8px;background:var(--terra);border-radius:50%}
+.uchip{display:flex;align-items:center;gap:8px;font-size:12px}
+.uchip .av{width:30px;height:30px;border-radius:50%;background:var(--navy);color:#fff;display:grid;place-items:center;font-weight:600;font-size:12px}
+
+/* ---------- main ---------- */
+#main{grid-area:main;overflow-y:auto;padding:22px 26px 60px}
+.rolebanner{background:var(--amber-bg);border:1px solid #ECD3A0;color:#7A5106;padding:8px 12px;border-radius:8px;font-size:12.5px;margin-bottom:16px;display:none}
+.pagehead{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:18px;flex-wrap:wrap}
+.pagehead h1{font-size:22px;font-weight:600;margin:0}
+.pagehead .crumb{font-size:12px;color:var(--hint);font-family:ui-monospace,monospace;margin-bottom:3px}
+.pagehead p{margin:5px 0 0;color:var(--muted);font-size:13px;max-width:640px}
+
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:1fr 1fr}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:1100px){.g4{grid-template-columns:repeat(2,1fr)}.g3,.g2{grid-template-columns:1fr}}
+
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px}
+.card h3{margin:0 0 3px;font-size:14px;font-weight:600}
+.card .csub{font-size:11.5px;color:var(--hint);margin:0 0 12px}
+.card .cact{float:right}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:15px}
+.kpi .l{font-size:11.5px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.4px}
+.kpi .v{font-size:26px;font-weight:700;margin:4px 0 2px;line-height:1.1}
+.kpi .s{font-size:12px;color:var(--hint)}
+.kpi.accent{border-left:3px solid var(--terra)}
+.kpi.good .v{color:var(--green)} .kpi.warn .v{color:var(--amber)}
+
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{text-align:left;color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.3px;padding:8px 10px;border-bottom:1px solid var(--line)}
+td{padding:9px 10px;border-bottom:1px solid var(--line)}
+tr:last-child td{border-bottom:none}
+tbody tr:hover{background:var(--panel-2)}
+.rowlink{cursor:pointer}
+
+.badge{display:inline-block;font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:20px}
+.b-green{background:var(--green-bg);color:#0F6E56} .b-amber{background:var(--amber-bg);color:#854F0B}
+.b-red{background:var(--red-bg);color:#8E241B} .b-gray{background:#EFEDE7;color:#5F5E5A}
+.b-navy{background:#E5EBF5;color:var(--navy)} .b-terra{background:#F6E4DB;color:#8A3C1E}
+
+.btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:#fff;color:var(--ink);padding:7px 12px;border-radius:8px;font-size:12.5px;font-weight:600}
+.btn:hover{border-color:var(--navy)}
+.btn-primary{background:var(--terra);border-color:var(--terra);color:#fff}
+.btn-primary:hover{background:var(--terra-l);border-color:var(--terra-l)}
+.btn-navy{background:var(--navy);border-color:var(--navy);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn-sm{padding:4px 9px;font-size:11.5px}
+
+.chartbox{position:relative;height:230px}
+.chartbox.tall{height:280px}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:4px}
+.field input,.field select,.field textarea{width:100%}
+.hint{font-size:11.5px;color:var(--hint)}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:900px){.split{grid-template-columns:1fr}}
+
+/* CPI matrix */
+.cpimx{display:grid;grid-template-columns:70px 1fr 1fr 1fr;grid-template-rows:auto repeat(3,1fr);gap:8px}
+.cpimx .axc{font-size:11px;font-weight:600;color:var(--muted);display:grid;place-items:center;text-align:center}
+.cpimx .cell{border-radius:10px;padding:12px;min-height:96px;border:1px solid var(--line);cursor:pointer;transition:transform .1s}
+.cpimx .cell:hover{transform:translateY(-2px)}
+.cpimx .cell .cc{font-family:ui-monospace,monospace;font-size:12px;font-weight:700;opacity:.8}
+.cpimx .cell .cn{font-weight:600;font-size:13.5px;margin:2px 0}
+.cpimx .cell .ck{font-size:11px;opacity:.85}
+.cpimx .cell .num{font-size:20px;font-weight:700;margin-top:6px}
+.hot{background:var(--terra);border-color:var(--terra);color:#fff}
+.hot .cc,.hot .ck{opacity:.9}
+.hottag{font-size:9px;background:#fff;color:var(--terra);font-weight:700;padding:1px 6px;border-radius:10px;float:right}
+
+/* funnel */
+.funnel{display:flex;flex-direction:column;gap:6px}
+.funnel .fstep{background:var(--navy);color:#fff;border-radius:8px;padding:8px 12px;font-size:12.5px;display:flex;justify-content:space-between;align-items:center}
+.funnel .fstep .fn{font-weight:700}
+
+/* persona bars */
+.pbar{margin-bottom:12px;cursor:pointer}
+.pbar .pl{display:flex;justify-content:space-between;font-size:12.5px;font-weight:600;margin-bottom:3px}
+.pbar .track{height:9px;background:#EFEDE7;border-radius:6px;overflow:hidden}
+.pbar .fill{height:100%;background:var(--terra);border-radius:6px}
+.pbar.sel .fill{background:var(--navy)}
+.pdesc{font-size:11.5px;color:var(--muted);margin-top:2px}
+
+/* login */
+#login{position:fixed;inset:0;background:linear-gradient(135deg,var(--navy),var(--navy-d));display:grid;place-items:center;z-index:50}
+#login .box{background:#fff;border-radius:16px;padding:30px 28px;width:340px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+#login .lg{width:46px;height:46px;border-radius:10px;background:var(--terra);color:#fff;display:grid;place-items:center;font-weight:700;font-size:19px;margin-bottom:14px}
+#login h2{margin:0 0 2px;font-size:19px} #login p{margin:0 0 18px;color:var(--muted);font-size:12.5px}
+
+.stratsplit{border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:12px}
+.stratsplit .tt{font-size:12px;font-weight:700;margin-bottom:6px}
+.tag-a{color:var(--blue)} .tag-b{color:var(--terra)}
+
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;opacity:0;transition:opacity .25s,transform .25s;z-index:60;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(-4px)}
+.pusat-only.hidden{display:none!important}
+.dim{opacity:.5;pointer-events:none}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--muted);margin-top:8px}
+.legend i{width:11px;height:11px;border-radius:3px;display:inline-block;margin-right:5px;vertical-align:-1px}
+</style>
+</head>
+<body>
+
+<div id="login">
+  <div class="box">
+    <div class="lg">DSI</div>
+    <h2>CPI Analytics</h2>
+    <p>Portal analitik nasabah — masuk untuk melanjutkan</p>
+    <div class="field"><label>Nama pengguna</label><input type="text" value="rm.jakarta" id="lg-user"></div>
+    <div class="field"><label>Kata sandi</label><input type="password" value="••••••••"></div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="doLogin()">Masuk</button>
+    <p class="hint" style="margin-top:14px">Mockup — kredensial apa pun diterima. Role dapat diganti di header setelah masuk.</p>
+  </div>
+</div>
+
+<div id="app" style="display:none">
+  <aside id="sidebar">
+    <div class="brand"><div class="logo">DSI</div><div><b>CPI Analytics</b><span>Tahap-01 · mockup</span></div></div>
+    <nav id="nav"></nav>
+    <div class="sidefoot">Data per: 31 Jul 2026 · v0.1 mockup</div>
+  </aside>
+
+  <header id="header">
+    <div class="hsearch"><span class="si">🔎</span><input type="text" placeholder="Cari nasabah (ID / nama)…" onkeydown="if(event.key==='Enter')globalSearch(this.value)"></div>
+    <div class="hctl"><label>Cabang</label>
+      <select id="branchSel" onchange="state.branch=this.value;route(state.screen)"></select>
+    </div>
+    <div class="hctl"><label>Periode</label>
+      <select id="periodSel"><option>12 bulan terakhir</option><option>6 bulan terakhir</option><option>YTD 2026</option></select>
+    </div>
+    <div class="databadge">Data per: 31 Jul 2026</div>
+    <div style="margin-left:auto;display:flex;align-items:center;gap:12px">
+      <div class="hctl"><label>Role</label>
+        <div class="roleswitch">
+          <button id="r-pusat" class="on" onclick="setRole('pusat')">Pusat</button>
+          <button id="r-cabang" onclick="setRole('cabang')">Cabang</button>
+        </div>
+      </div>
+      <button class="bell" onclick="route('NOT-01')">🔔<span class="dot"></span></button>
+      <div class="uchip"><div class="av" id="uav">RM</div><div id="uname">RM Jakarta</div></div>
+    </div>
+  </header>
+
+  <main id="main"></main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================ STATE & DATA ============================ */
+const state={role:'pusat',branch:'Semua Cabang',screen:'CI-01',cabangBranch:'Jakarta Pusat'};
+const BRANCHES=['Jakarta Pusat','Bandung','Surabaya','Medan','Denpasar'];
+const MONTHS=['Ags','Sep','Okt','Nov','Des','Jan','Feb','Mar','Apr','Mei','Jun','Jul'];
+const BANKING=['Tabungan Reguler','Deposito Berjangka','Kredit Modal Kerja','KPR','Kartu Kredit','Bancassurance','Giro','Reksadana'];
+const DIGITAL=['Mobile Banking','QRIS Merchant','e-Wallet Top-up','Virtual Account','Paylater','Auto-Debit','Internet Banking','Investasi Digital'];
+const PERSONAS=['Young Professional','Mass Affluent','Active Borrower','Pre-Retirement','Others'];
+const PERSONA_DESC={
+ 'Young Professional':'Digital-savvy · transaksi aktif · sensitif fitur & reward',
+ 'Mass Affluent':'Mengutamakan hubungan personal · portofolio beragam',
+ 'Active Borrower':'Terikat produk pinjaman · sensitif suku bunga',
+ 'Pre-Retirement':'Berorientasi keamanan · tujuan investasi jangka panjang',
+ 'Others':'Memerlukan analisis lebih lanjut'};
+// cluster map: [profitTier][churnTier] ; tiers 0=Lo 1=Med 2=Hi
+const CLUSTERS={
+ '2_0':{c:'C9',n:'Crown Jewel',s:'VIP + Wealth Mgmt'}, '2_1':{c:'C6',n:'Restless Star',s:'Proactive RM + Up-sell'}, '2_2':{c:'C3',n:'Burning Bridge',s:'Emergency RM + Bespoke',hot:true},
+ '1_0':{c:'C8',n:'Steady Earner',s:'Cross-sell Journey'}, '1_1':{c:'C5',n:'Swing Voter',s:'CX + Cross-sell'}, '1_2':{c:'C2',n:'Fading Signal',s:'Selective Retention'},
+ '0_0':{c:'C7',n:'Sleeping Giant',s:'Long-term CLV'}, '0_1':{c:'C4',n:'Casual Visitor',s:'Light digital'}, '0_2':{c:'C1',n:'Ghost',s:'Allow natural churn'}};
+
+const STRATEGIES=[
+ {code:'NPS-01',name:'Dedicated RM Engagement',type:'A',channel:'RM',target:'Mass Affluent',cost:250000,window:90,active:true,desc:'Pendekatan personal via RM khusus & akses private banking.'},
+ {code:'POF-01',name:'Reward & Cashback Digital',type:'B',channel:'Mobile',target:'Young Professional',cost:150000,window:90,active:true,desc:'Kampanye cashback via "Special for You" di mobile banking.'},
+ {code:'POF-02',name:'Preferential Rate Kredit',type:'B',channel:'RM',target:'Active Borrower',cost:400000,window:120,active:true,desc:'Suku bunga preferensial & restrukturisasi fasilitas kredit.'},
+ {code:'NPS-02',name:'CX Improvement Call',type:'A',channel:'RM',target:'Swing Voter',cost:100000,window:60,active:false,desc:'Panggilan retensi & perbaikan kualitas layanan.'}];
+
+function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+const R=rng(20260731);
+const FIRST=['Andi','Bagus','Citra','Dewi','Eka','Fajar','Gita','Hadi','Indah','Joko','Kartika','Lina','Maya','Nanda','Oki','Putri','Rian','Sari','Tono','Wulan','Yusuf','Zahra'];
+const LAST=['Pratama','Wijaya','Santoso','Kusuma','Halim','Nugroho','Saputra','Anggraini','Hidayat','Permana'];
+const CORP=['PT Maju Bersama','CV Sinar Abadi','PT Karya Nusantara','PT Boga Rasa','CV Tekno Mandiri','PT Sentosa Jaya','PT Cahaya Timur','PT Griya Sejahtera'];
+
+function tier(v){return v>=80?2:v>=50?1:0;}
+const TIERNAME=['Lo','Med','Hi'];
+function money(n){return 'Rp '+n.toLocaleString('id-ID');}
+function moneyM(n){return 'Rp '+(n/1e6).toFixed(1)+' jt';}
+
+const CUSTOMERS=[];
+for(let i=0;i<64;i++){
+  const corp=R()<0.28;
+  const name=corp?CORP[Math.floor(R()*CORP.length)]+' '+(i):(FIRST[Math.floor(R()*FIRST.length)]+' '+LAST[Math.floor(R()*LAST.length)]);
+  const branch=BRANCHES[Math.floor(R()*BRANCHES.length)];
+  // bias: create a healthy number of HOT targets
+  let churn=Math.floor(R()*100), profit=Math.floor(R()*100);
+  if(R()<0.22){churn=80+Math.floor(R()*20);profit=78+Math.floor(R()*22);} // HOT
+  const pt=tier(profit),ct=tier(churn);
+  const cl=CLUSTERS[pt+'_'+ct];
+  const persona=corp?PERSONAS[1]:PERSONAS[Math.floor(R()*PERSONAS.length)];
+  const nprod=1+Math.floor(R()*4);
+  const prods=[...BANKING].sort(()=>R()-.5).slice(0,nprod);
+  const recsB=[...BANKING].filter(p=>!prods.includes(p)).sort(()=>R()-.5).slice(0,3).map(p=>({p,conf:(0.4+R()*0.55).toFixed(2),lift:(1+R()*2.5).toFixed(1)}));
+  const recsD=[...DIGITAL].sort(()=>R()-.5).slice(0,3).map(p=>({p,conf:(0.4+R()*0.55).toFixed(2),lift:(1+R()*2.5).toFixed(1)}));
+  const profitRp=Math.floor((profit/100)*(corp?900:180)*1e6/1e5)*1e5;
+  CUSTOMERS.push({id:'CUS'+(10230+i),name,type:corp?'Korporat':'Individu',branch,churn,profit,profitRp,pt,ct,cluster:cl,persona,prods,recsB,recsD});
+}
+// campaign assignments on HOT customers
+const STATUSES=['Plan','In Progress','Done'];
+const ASSIGN=[];
+CUSTOMERS.filter(c=>c.cluster.hot).forEach((c,i)=>{
+  const strat=STRATEGIES[i%STRATEGIES.length];
+  const st=STATUSES[i%3];
+  let phase='—',outcome='—',converted=false;
+  if(st==='Done'){ const mature=i%2===0; if(mature){outcome=R()<0.62?'Retained':'Churned';converted=strat.type==='B'&&outcome==='Retained'&&R()<0.6;phase='Matang';}else{phase='Monitoring';} }
+  ASSIGN.push({cus:c,strat,status:st,phase,outcome,converted,owner:'RM '+c.branch.split(' ')[0],
+    winStart:st==='Done'?'12 Mei 2026':'—',winDays:strat.window,cost:strat.cost});
+});
+
+/* ============================ HELPERS ============================ */
+const isPusat=()=>state.role==='pusat';
+function scope(){ if(!isPusat())return BRANCHES.includes(state.cabangBranch)?[state.cabangBranch]:BRANCHES;
+  return state.branch==='Semua Cabang'?BRANCHES:[state.branch]; }
+function inScope(b){return scope().includes(b);}
+function scoped(){return CUSTOMERS.filter(c=>inScope(c.branch));}
+function el(id){return document.getElementById(id);}
+function tierBadge(t,label){const c=['b-green','b-amber','b-red'][t];return `<span class="badge ${c}">${label||TIERNAME[t]}</span>`;}
+function profitBadge(t){const c=['b-gray','b-amber','b-green'][t];return `<span class="badge ${c}">${TIERNAME[t]}</span>`;}
+let charts=[];
+function chart(id,cfg){const c=new Chart(el(id),cfg);charts.push(c);return c;}
+function killCharts(){charts.forEach(c=>c.destroy());charts=[];}
+function toast(m){const t=el('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1900);}
+Chart&&(Chart.defaults.font.family="'Plus Jakarta Sans',sans-serif",Chart.defaults.font.size=11,Chart.defaults.color='#6B6862',Chart.defaults.plugins.legend.labels.boxWidth=12);
+const NAVY='#1F3864',TERRA='#B4522E',GREEN='#1D9E75',AMBER='#BA7517',RED='#C0392B',BLUE='#5B8FC7',GRAY='#B4B2A9';
+
+function pagehead(code,title,desc,actions){return `<div class="pagehead"><div><div class="crumb">${code}</div><h1>${title}</h1>${desc?`<p>${desc}</p>`:''}</div><div>${actions||''}</div></div>`;}
+function branchDropdown(id,onchange,all){let opts=(all&&isPusat()?['Semua Cabang']:[]).concat(scope().length===1?scope():BRANCHES);
+  if(!isPusat())opts=[state.cabangBranch];
+  return `<select id="${id}" ${onchange?`onchange="${onchange}"`:''} ${!isPusat()?'disabled':''}>${opts.map(o=>`<option>${o}</option>`).join('')}</select>`;}
+
+/* ============================ SCREENS ============================ */
+const S={};
+
+/* --- Corporate Insight --- */
+S['CI-01']={render(){
+  const cs=scoped();
+  const active=cs.length*137; // dummy multiplier
+  const perBranch=scope().map(b=>({b,n:CUSTOMERS.filter(c=>c.branch===b).length*137}));
+  const topProfit=[...cs].sort((a,b)=>b.profitRp-a.profitRp);
+  const byBranchProfit=scope().map(b=>({b,v:CUSTOMERS.filter(c=>c.branch===b).reduce((s,c)=>s+c.profitRp,0)})).sort((a,b)=>b.v-a.v);
+  const prodCount={};CUSTOMERS.forEach(c=>c.prods.forEach(p=>prodCount[p]=(prodCount[p]||0)+1));
+  const topProd=Object.entries(prodCount).sort((a,b)=>b[1]-a[1]).slice(0,3);
+  return pagehead('CI-01','Corporate Insight',
+    'Ringkasan portofolio & efektivitas kampanye. '+(isPusat()?'Menampilkan seluruh cabang.':'Ter-scope ke cabang Anda.'),
+    `<button class="btn"><span>⬇</span> Export ringkasan</button>`)+
+  `<div class="grid g4" style="margin-bottom:16px">
+    <div class="kpi accent"><div class="l">Nasabah aktif</div><div class="v">${active.toLocaleString('id-ID')}</div><div class="s">${scope().length} cabang dalam cakupan</div></div>
+    <div class="kpi good"><div class="l">Total saved profit</div><div class="v">${moneyM(1840000000)}</div><div class="s">dari kampanye retensi (matang)</div></div>
+    <div class="kpi warn"><div class="l">Total campaign cost</div><div class="v">${moneyM(420000000)}</div><div class="s">biaya aktual + standar</div></div>
+    <div class="kpi"><div class="l">Overall ROI</div><div class="v">338%</div><div class="s">observasional · <a onclick="route('CAM-03')">rincian</a></div></div>
+  </div>
+  <div class="grid g2" style="margin-bottom:16px">
+    <div class="card"><h3>Nasabah aktif per cabang</h3><p class="csub">Distribusi portofolio</p><div class="chartbox"><canvas id="ci-pie"></canvas></div></div>
+    <div class="card"><h3>Top cabang paling profitable</h3><p class="csub">12 bulan terakhir</p><div class="chartbox"><canvas id="ci-bar"></canvas></div></div>
+  </div>
+  <div class="grid g2">
+    <div class="card"><h3>Top 3 produk terlaris</h3><p class="csub">12 bulan · dengan jumlah pengguna</p>
+      <table><tbody>${topProd.map((p,i)=>`<tr><td style="width:24px;font-weight:700;color:var(--terra)">${i+1}</td><td>${p[0]}</td><td style="text-align:right"><b>${(p[1]*137).toLocaleString('id-ID')}</b> pengguna</td></tr>`).join('')}</tbody></table>
+    </div>
+    <div class="card"><h3 class="cact"><button class="btn btn-sm" onclick="toast('Unduh PDF (mockup)')">⬇ PDF</button></h3><h3>Top 10 nasabah paling profitable</h3><p class="csub">Klik baris untuk profil</p>
+      <table><thead><tr><th>Nasabah</th><th>Tipe</th><th style="text-align:right">Profitability</th></tr></thead><tbody>
+      ${topProfit.slice(0,10).map(c=>`<tr class="rowlink" onclick="openCustomer('${c.id}')"><td>${c.name}</td><td>${c.type}</td><td style="text-align:right"><b>${moneyM(c.profitRp)}</b></td></tr>`).join('')}
+      </tbody></table>
+    </div>
+  </div>`;
+},onShow(){const pb=scope().map(b=>({b,n:CUSTOMERS.filter(c=>c.branch===b).length*137}));
+  chart('ci-pie',{type:'doughnut',data:{labels:pb.map(x=>x.b),datasets:[{data:pb.map(x=>x.n),backgroundColor:[NAVY,TERRA,GREEN,AMBER,BLUE]}]},options:{plugins:{legend:{position:'right'}},maintainAspectRatio:false}});
+  const bp=scope().map(b=>({b,v:CUSTOMERS.filter(c=>c.branch===b).reduce((s,c)=>s+c.profitRp,0)/1e6})).sort((a,b)=>b.v-a.v);
+  chart('ci-bar',{type:'bar',data:{labels:bp.map(x=>x.b),datasets:[{data:bp.map(x=>x.v),backgroundColor:TERRA,borderRadius:5}]},options:{plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>'Rp '+v+'jt'}}},maintainAspectRatio:false}});
+}};
+
+/* --- Churn --- */
+S['CH-01']={render(){return pagehead('CH-01','Churn Overview','Bandingkan risiko churn antar-cabang dan komposisinya.')+
+  `<div class="grid g2">
+    <div class="card"><h3>Churn distribution per cabang</h3><p class="csub">Rasio nasabah churn index ≥ 80% ÷ total nasabah</p><div class="chartbox"><canvas id="ch-bar"></canvas></div></div>
+    <div class="card"><h3>Jumlah nasabah per tier & tren</h3><p class="csub">Lo / Med / Hi selama 12 bulan</p><div class="chartbox"><canvas id="ch-line"></canvas></div></div>
+  </div>`;
+},onShow(){
+  const bars=scope().map(b=>{const g=CUSTOMERS.filter(c=>c.branch===b);const hi=g.filter(c=>c.churn>=80).length;return{b,r:g.length?Math.round(hi/g.length*100):0};});
+  chart('ch-bar',{type:'bar',data:{labels:bars.map(x=>x.b),datasets:[{data:bars.map(x=>x.r),backgroundColor:RED,borderRadius:5}]},options:{plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>v+'%'}}},maintainAspectRatio:false}});
+  const mk=(base,amp)=>MONTHS.map((_,i)=>Math.round(base+Math.sin(i/2)*amp+i*2));
+  chart('ch-line',{type:'line',data:{labels:MONTHS,datasets:[
+    {label:'Lo',data:mk(620,40),borderColor:GREEN,backgroundColor:'transparent',tension:.3},
+    {label:'Med',data:mk(310,30),borderColor:AMBER,backgroundColor:'transparent',tension:.3},
+    {label:'Hi',data:mk(120,20),borderColor:RED,backgroundColor:'transparent',tension:.3}]},options:{maintainAspectRatio:false,plugins:{legend:{position:'bottom'}}}});
+}};
+S['CH-02']={render(){const cs=[...scoped()].sort((a,b)=>b.churn-a.churn).slice(0,50);
+  return pagehead('CH-02','Churn Ranking — Top 50',null,`<button class="btn btn-sm" onclick="toast('Unduh PDF (mockup)')">⬇ PDF</button>`)+
+  `<div class="card"><div style="display:flex;gap:10px;align-items:center;margin-bottom:12px"><label class="hint">Cabang</label>${branchDropdown('ch2b','route(\'CH-02\')')}</div>
+   <table><thead><tr><th>#</th><th>Nasabah</th><th>Cabang</th><th>Churn Index</th><th>Tier</th><th>Cluster</th></tr></thead><tbody>
+   ${cs.map((c,i)=>`<tr class="rowlink" onclick="openCustomer('${c.id}')"><td>${i+1}</td><td>${c.name}</td><td>${c.branch}</td><td><b>${c.churn}</b></td><td>${tierBadge(c.ct)}</td><td><span class="badge b-navy">${c.cluster.c}</span></td></tr>`).join('')}
+   </tbody></table></div>`;}};
+function modelPerf(code,title,metrics,extra){return pagehead(code,title,'Indikator kepercayaan bisnis atas model — bukan konsol teknis.')+
+  `<div class="grid g4" style="margin-bottom:16px">${metrics.map(m=>`<div class="kpi ${m.k||''}"><div class="l">${m.l}</div><div class="v">${m.v}</div><div class="s">${m.s||''}</div></div>`).join('')}</div>
+   <div class="card"><h3>${extra?extra.title:'Ringkasan'}</h3><p class="csub">Dilatih terakhir: 28 Jul 2026 · jendela data: 12 bulan</p><div class="chartbox"><canvas id="${code}-c"></canvas></div></div>`;}
+S['CH-03']={render(){return modelPerf('CH-03','Model Performance — Churn',
+  [{l:'Akurasi validasi',v:'87%',k:'good'},{l:'Presisi (Hi churn)',v:'0.81'},{l:'Recall (Hi churn)',v:'0.74'},{l:'Prediksi meleset',v:'13%',k:'warn'}],{title:'Distribusi skor churn'});},
+  onShow(){chart('CH-03-c',{type:'bar',data:{labels:['0-20','20-40','40-60','60-80','80-100'],datasets:[{data:[1820,940,610,380,240],backgroundColor:[GREEN,GREEN,AMBER,AMBER,RED],borderRadius:5}]},options:{plugins:{legend:{display:false}},maintainAspectRatio:false}});}};
+
+/* --- Profitability --- */
+S['CP-01']={render(){return pagehead('CP-01','Profitability Overview','Gambaran kontribusi profit portofolio.')+
+  `<div class="grid g2">
+    <div class="card"><h3>Tren total profitability nasional</h3><p class="csub">12 bulan terakhir</p><div class="chartbox"><canvas id="cp-line"></canvas></div></div>
+    <div class="card"><h3>Profitability per cabang</h3><p class="csub">12 bulan terakhir</p><div class="chartbox"><canvas id="cp-pie"></canvas></div></div>
+  </div>`;},onShow(){
+  chart('cp-line',{type:'line',data:{labels:MONTHS,datasets:[{label:'Profit (Rp jt)',data:MONTHS.map((_,i)=>1200+i*90+Math.round(Math.sin(i)*80)),borderColor:TERRA,backgroundColor:'rgba(180,82,46,.08)',fill:true,tension:.3}]},options:{maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>'Rp '+v+'jt'}}}}});
+  const bp=scope().map(b=>({b,v:CUSTOMERS.filter(c=>c.branch===b).reduce((s,c)=>s+c.profitRp,0)/1e6}));
+  chart('cp-pie',{type:'doughnut',data:{labels:bp.map(x=>x.b),datasets:[{data:bp.map(x=>x.v),backgroundColor:[NAVY,TERRA,GREEN,AMBER,BLUE]}]},options:{maintainAspectRatio:false,plugins:{legend:{position:'right'}}}});
+}};
+S['CP-02']={render(){const cs=[...scoped()].sort((a,b)=>b.profitRp-a.profitRp);
+  return pagehead('CP-02','Customer Profitability List',null,`<button class="btn btn-sm" onclick="toast('Unduh PDF Top-N (mockup)')">⬇ PDF</button>`)+
+  `<div class="card"><div style="display:flex;gap:10px;align-items:center;margin-bottom:12px"><label class="hint">Cabang</label>${branchDropdown('cp2b','route(\'CP-02\')')}</div>
+   <table><thead><tr><th>Nasabah</th><th>Tipe</th><th>Cabang</th><th>Tier profit</th><th style="text-align:right">Profitability</th></tr></thead><tbody>
+   ${cs.slice(0,25).map(c=>`<tr class="rowlink" onclick="openCustomer('${c.id}')"><td>${c.name}</td><td>${c.type}</td><td>${c.branch}</td><td>${profitBadge(c.pt)}</td><td style="text-align:right"><b>${moneyM(c.profitRp)}</b></td></tr>`).join('')}
+   </tbody></table></div>`;}};
+S['CP-03']={render(){return modelPerf('CP-03','Model Performance — Profitability',
+  [{l:'MAPE',v:'9.4%',k:'good'},{l:'R²',v:'0.86'},{l:'Bias',v:'+1.2%'},{l:'Jendela',v:'6 bln'}],{title:'Prediksi vs aktual (Rp jt)'});},
+  onShow(){chart('CP-03-c',{type:'line',data:{labels:MONTHS,datasets:[{label:'Aktual',data:MONTHS.map((_,i)=>1200+i*90),borderColor:NAVY,tension:.3},{label:'Prediksi',data:MONTHS.map((_,i)=>1200+i*90+Math.round(Math.sin(i)*60)),borderColor:TERRA,borderDash:[5,4],tension:.3}]},options:{maintainAspectRatio:false,plugins:{legend:{position:'bottom'}}}});}};
+
+/* --- Segmentation --- */
+S['CS-01']={render(){const counts={};CUSTOMERS.forEach(c=>counts[c.persona]=(counts[c.persona]||0)+1);
+  return pagehead('CS-01','Segmentation Overview','Pemilihan model & peta segmen. Model terpilih: K-Means (DBI terendah).')+
+  `<div class="grid g2" style="margin-bottom:16px">
+    <div class="card"><h3>Davies-Bouldin Index per k</h3><p class="csub">k optimal = 5 (DBI terendah)</p><div class="chartbox"><canvas id="cs-dbi"></canvas></div></div>
+    <div class="card"><h3>Ukuran tiap cluster</h3><p class="csub">Jumlah nasabah per persona</p><div class="chartbox"><canvas id="cs-size"></canvas></div></div>
+  </div>
+  <div class="grid g3">${PERSONAS.map(p=>`<div class="card rowlink" onclick="route('CS-02')"><span class="badge b-navy" style="float:right">${((counts[p]||0)*137).toLocaleString('id-ID')}</span><h3>${p}</h3><p class="csub" style="margin:0">${PERSONA_DESC[p]}</p></div>`).join('')}</div>`;},
+  onShow(){chart('cs-dbi',{type:'line',data:{labels:['2','3','4','5','6','7','8'],datasets:[{data:[1.42,1.18,0.96,0.71,0.83,0.92,1.05],borderColor:NAVY,pointBackgroundColor:(ctx)=>ctx.dataIndex===3?TERRA:NAVY,pointRadius:(ctx)=>ctx.dataIndex===3?6:3,tension:.3}]},options:{maintainAspectRatio:false,plugins:{legend:{display:false}}}});
+  const counts={};CUSTOMERS.forEach(c=>counts[c.persona]=(counts[c.persona]||0)+1);
+  chart('cs-size',{type:'bar',data:{labels:PERSONAS,datasets:[{data:PERSONAS.map(p=>(counts[p]||0)*137),backgroundColor:TERRA,borderRadius:5}]},options:{indexAxis:'y',maintainAspectRatio:false,plugins:{legend:{display:false}}}});}};
+S['CS-02']={render(){return pagehead('CS-02','Cluster Characteristics & Strategy',null,
+  `<select id="cs2sel" onchange="route('CS-02')">${PERSONAS.map(p=>`<option>${p}</option>`).join('')}</select>`)+
+  `<div class="grid g2"><div class="card"><h3>Karakteristik & strategi</h3><p class="csub">Young Professional</p>
+     <table><tbody>
+      <tr><td class="hint">Demografi</td><td>Usia 25–35 · pendapatan menengah · urban</td></tr>
+      <tr><td class="hint">Perilaku</td><td>Transaksi digital tinggi · frekuensi tinggi</td></tr>
+      <tr><td class="hint">Produk dominan</td><td>Tabungan · Mobile Banking · Paylater</td></tr>
+      <tr><td class="hint">Strategi</td><td>Kampanye digital · reward & cashback · literasi investasi</td></tr>
+     </tbody></table></div>
+   <div class="card"><h3>Age / Education / Profitability per cluster</h3><p class="csub">Perbandingan antar persona</p><div class="chartbox"><canvas id="cs2-line"></canvas></div></div></div>`;},
+  onShow(){chart('cs2-line',{type:'line',data:{labels:PERSONAS,datasets:[
+    {label:'Age (avg)',data:[30,45,38,58,34],borderColor:NAVY,tension:.3},
+    {label:'Education (idx)',data:[85,78,65,60,55],borderColor:GREEN,tension:.3},
+    {label:'Profitability',data:[62,88,70,74,40],borderColor:TERRA,tension:.3}]},options:{maintainAspectRatio:false,plugins:{legend:{position:'bottom'}}}});}};
+S['CS-03']={render(){return pagehead('CS-03','Product Usage Analysis','Dua arah: usage satu produk lintas cluster, atau semua produk pada satu cluster.')+
+  `<div class="card"><div style="display:flex;gap:16px;align-items:center;margin-bottom:14px;flex-wrap:wrap">
+    <div class="roleswitch"><button id="m-prod" class="on" onclick="csMode('prod')">Per produk</button><button id="m-clus" onclick="csMode('clus')">Per cluster</button></div>
+    <div id="cs3selwrap"></div></div>
+   <div class="chartbox tall"><canvas id="cs3-c"></canvas></div></div>`;},
+  onShow(){window._csmode=window._csmode||'prod';renderCs3();}};
+window.csMode=m=>{window._csmode=m;el('m-prod').classList.toggle('on',m==='prod');el('m-clus').classList.toggle('on',m==='clus');renderCs3();};
+function renderCs3(){const m=window._csmode;const w=el('cs3selwrap');
+  if(m==='prod'){w.innerHTML=`<label class="hint">Produk</label> <select onchange="renderCs3()">${BANKING.slice(0,5).map(p=>`<option>${p}</option>`).join('')}</select>`;
+    charts.filter(c=>c.canvas.id==='cs3-c').forEach(c=>c.destroy());charts=charts.filter(c=>c.canvas.id!=='cs3-c');
+    chart('cs3-c',{type:'bar',data:{labels:PERSONAS,datasets:[{label:'Penetrasi (%)',data:[72,40,55,30,18],backgroundColor:TERRA,borderRadius:5}]},options:{maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>v+'%'}}}}});
+  }else{w.innerHTML=`<label class="hint">Cluster</label> <select onchange="renderCs3()">${PERSONAS.map(p=>`<option>${p}</option>`).join('')}</select>`;
+    charts.filter(c=>c.canvas.id==='cs3-c').forEach(c=>c.destroy());charts=charts.filter(c=>c.canvas.id!=='cs3-c');
+    chart('cs3-c',{type:'bar',data:{labels:BANKING,datasets:[{label:'Penetrasi (%)',data:BANKING.map((_,i)=>Math.round(80-i*8+Math.sin(i)*10)),backgroundColor:NAVY,borderRadius:5}]},options:{indexAxis:'y',maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{callback:v=>v+'%'}}}}});
+  }}
+S['CS-04']={render(){return modelPerf('CS-04','Model Performance — Segmentation',
+  [{l:'DBI (k=5)',v:'0.71',k:'good'},{l:'Silhouette',v:'0.58'},{l:'Outlier',v:'3.2%'},{l:'Algoritma',v:'K-Means'}],{title:'DBI per kandidat k'});},
+  onShow(){chart('CS-04-c',{type:'bar',data:{labels:['2','3','4','5','6','7','8'],datasets:[{data:[1.42,1.18,0.96,0.71,0.83,0.92,1.05],backgroundColor:(c)=>c.dataIndex===3?TERRA:GRAY,borderRadius:5}]},options:{maintainAspectRatio:false,plugins:{legend:{display:false}}}});}};
+
+/* --- CPI Matrix --- */
+S['CPI-01']={render(){
+  const count=(pt,ct)=>scoped().filter(c=>c.pt===pt&&c.ct===ct).length;
+  const cell=(pt,ct)=>{const cl=CLUSTERS[pt+'_'+ct];const n=count(pt,ct)*13;return `<div class="cell ${cl.hot?'hot':''}" style="${cl.hot?'':'background:'+cellBg(pt,ct)}" onclick="${cl.hot?"route('CPI-02')":"toast('Cluster "+cl.c+" — "+cl.n+"')"}">${cl.hot?'<span class="hottag">HOT TARGET</span>':''}<div class="cc">${cl.c}</div><div class="cn">${cl.n}</div><div class="ck">${cl.s}</div><div class="num">${n.toLocaleString('id-ID')}</div></div>`;};
+  return pagehead('CPI-01','CPI Matrix Overview','Churn × Profitability → 9 cluster gabungan. Kuadran HOT TARGET disorot; klik untuk deep-dive.')+
+  `<div class="card"><div class="cpimx">
+    <div class="axc"></div><div class="axc">Churn Lo</div><div class="axc">Churn Med</div><div class="axc">Churn Hi</div>
+    <div class="axc">Profit<br>Hi</div>${cell(2,0)}${cell(2,1)}${cell(2,2)}
+    <div class="axc">Profit<br>Med</div>${cell(1,0)}${cell(1,1)}${cell(1,2)}
+    <div class="axc">Profit<br>Lo</div>${cell(0,0)}${cell(0,1)}${cell(0,2)}
+  </div>
+  <div class="legend"><span><i style="background:var(--terra)"></i>HOT TARGET (prioritas utama)</span><span><i style="background:#E3F4ED"></i>profit tinggi</span><span><i style="background:#EFEDE7"></i>profit rendah/menengah</span></div>
+  </div>`;}};
+function cellBg(pt,ct){if(pt===2)return '#E3F4ED';if(pt===0)return '#F3F1EB';return '#FBF3E3';}
+S['CPI-02']={render(){const hot=scoped().filter(c=>c.cluster.hot);
+  const comp={};hot.forEach(c=>comp[c.persona]=(comp[c.persona]||0)+1);
+  const total=hot.length||1;
+  const rows=Object.entries(comp).sort((a,b)=>b[1]-a[1]);
+  return pagehead('CPI-02','HOT Target Deep-Dive','Bedah kuadran C3 (Profit Hi × Churn Hi) — komposisi persona & strategi.',
+   `<button class="btn btn-sm" onclick="toast('Unduh PDF (mockup)')">⬇ PDF</button> <button class="btn btn-primary btn-sm" onclick="route('CAM-02')">Tugaskan strategi →</button>`)+
+  `<div class="grid g2"><div class="card"><h3>Komposisi cluster HOT TARGET</h3><p class="csub">Klik persona untuk karakteristik & strategi</p>
+    ${rows.map(([p,n],i)=>`<div class="pbar ${i===0?'sel':''}" onclick="selPersona(this,'${p}')"><div class="pl"><span>${p}</span><span>${Math.round(n/total*100)}%</span></div><div class="track"><div class="fill" style="width:${Math.round(n/total*100)}%"></div></div><div class="pdesc">${PERSONA_DESC[p]}</div></div>`).join('')}
+   </div>
+   <div class="card" id="personaDetail"></div></div>`;},
+  onShow(){selPersona(document.querySelector('.pbar'),Object.keys(scoped().filter(c=>c.cluster.hot).reduce((a,c)=>(a[c.persona]=1,a),{}))[0]||'Young Professional');}};
+window.selPersona=(node,p)=>{document.querySelectorAll('.pbar').forEach(x=>x.classList.remove('sel'));node&&node.classList.add('sel');
+  el('personaDetail').innerHTML=`<h3>${p}</h3><p class="csub">${PERSONA_DESC[p]}</p>
+   <div class="stratsplit"><div class="tt tag-a">Type A — Non-Product Strategy</div><div style="font-size:12.5px">Ditangani RM: pendekatan personal, penyesuaian layanan. Recommender tidak diperlukan.</div></div>
+   <div class="stratsplit"><div class="tt tag-b">Type B — Product Offering</div><div style="font-size:12.5px">Retensi via penawaran produk → diteruskan ke Recommender & "Special for You".</div></div>
+   <button class="btn btn-navy btn-sm" onclick="route('CAM-02')">Tugaskan ke Campaign →</button>`;};
+
+/* --- Recommender --- */
+S['RS-01']={render(){const cs=scoped().filter(c=>c.cluster.hot);
+  return pagehead('RS-01','Product Recommendations','Untuk cluster ber-strategi Product Offering. 3 produk banking + 3 digital per nasabah.',
+   `<button class="btn btn-sm" onclick="toast('Unduh PDF (mockup)')">⬇ PDF</button>`)+
+  `<div class="card"><div style="display:flex;gap:14px;align-items:center;margin-bottom:12px;flex-wrap:wrap">
+     <div><label class="hint">Cluster</label> <select><option>C3 · Burning Bridge (HOT)</option><option>C2 · Fading Signal</option></select></div>
+     <div><label class="hint">Cabang</label> ${branchDropdown('rs1b','route(\'RS-01\')')}</div></div>
+   ${cs.slice(0,6).map(c=>`<div style="border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:10px">
+     <div style="display:flex;justify-content:space-between;align-items:center"><b class="rowlink" onclick="openCustomer('${c.id}')">${c.name}</b><span class="badge b-terra">${c.persona}</span></div>
+     <div class="split" style="margin-top:8px">
+       <div><div class="hint" style="margin-bottom:4px">Produk banking</div>${c.recsB.map(r=>recRow(r)).join('')}</div>
+       <div><div class="hint" style="margin-bottom:4px">Produk digital</div>${c.recsD.map(r=>recRow(r)).join('')}</div>
+     </div></div>`).join('')}
+   </div>`;}};
+function recRow(r){return `<div style="display:flex;justify-content:space-between;font-size:12px;padding:3px 0"><span>${r.p}</span><span class="hint">conf ${r.conf} · lift ${r.lift}</span></div>`;}
+S['RS-02']={render(){return modelPerf('RS-02','Model Performance — Recommender',
+  [{l:'Rule aktif',v:'214'},{l:'Cakupan nasabah',v:'78%',k:'good'},{l:'Avg confidence',v:'0.62'},{l:'Avg lift',v:'1.9'}],{title:'Sebaran lift'});},
+  onShow(){chart('RS-02-c',{type:'bar',data:{labels:['<1','1-1.5','1.5-2','2-2.5','>2.5'],datasets:[{data:[18,64,72,42,18],backgroundColor:[GRAY,GREEN,GREEN,TERRA,TERRA],borderRadius:5}]},options:{maintainAspectRatio:false,plugins:{legend:{display:false}}}});}};
+
+/* --- Campaign --- */
+S['CAM-01']={render(){return pagehead('CAM-01','Business Strategy Registry','Master strategi retensi + biaya standar.',
+   isPusat()?`<button class="btn btn-primary btn-sm" onclick="toast('Form buat strategi (mockup)')">+ Strategi baru</button>`:'')+
+  (isPusat()?'':`<div class="rolebanner" style="display:block">Mode Role Cabang — Registry hanya bisa dibaca. Pembuatan/ubah strategi dilakukan oleh Role Pusat.</div>`)+
+  `<div class="card"><table><thead><tr><th>Kode</th><th>Nama</th><th>Tipe</th><th>Channel</th><th>Sasaran</th><th style="text-align:right">Biaya standar</th><th>Jendela</th><th>Status</th><th></th></tr></thead><tbody>
+   ${STRATEGIES.map(s=>`<tr><td><b class="mono">${s.code}</b></td><td>${s.name}</td><td><span class="badge ${s.type==='A'?'b-navy':'b-terra'}">Type ${s.type}</span></td><td>${s.channel}</td><td>${s.target}</td><td style="text-align:right">${money(s.cost)}/nasabah</td><td>${s.window} hari</td><td>${s.active?'<span class="badge b-green">Aktif</span>':'<span class="badge b-gray">Nonaktif</span>'}</td><td>${isPusat()?`<button class="btn btn-sm" onclick="toast('Edit ${s.code} (mockup)')">Edit</button>`:'<span class="hint">—</span>'}</td></tr>`).join('')}
+   </tbody></table></div>`;}};
+S['CAM-02']={render(){return pagehead('CAM-02','Strategy Assignment & Progress','Tandai nasabah HOT TARGET, kelola progres & jendela pengamatan.',
+   `<button class="btn btn-sm" onclick="toast('Tugaskan massal per cluster (mockup)')">Bulk assign</button>`)+
+  `<div class="card"><table><thead><tr><th>Nasabah</th><th>Persona</th><th>Strategi</th><th>Owner</th><th>Status</th><th>Jendela</th><th>Aksi</th></tr></thead><tbody>
+   ${ASSIGN.filter(a=>inScope(a.cus.branch)).map((a,i)=>`<tr><td class="rowlink" onclick="openCustomer('${a.cus.id}')">${a.cus.name}</td><td><span class="badge b-terra">${a.cus.persona}</span></td>
+     <td><b class="mono">${a.strat.code}</b> ${a.strat.type==='B'?'<span class="badge b-terra">B</span>':'<span class="badge b-navy">A</span>'}</td><td>${a.owner}</td>
+     <td>${statusBadge(a.status)}</td><td class="hint">${a.status==='Done'?a.winDays+' hari · '+a.phase:'—'}</td>
+     <td>${a.strat.type==='B'?`<button class="btn btn-sm btn-primary" onclick="toast('Offer Special for You terkirim (mockup)')">Kirim offer</button>`:`<button class="btn btn-sm" onclick="toast('Ubah status (mockup)')">Update</button>`}</td></tr>`).join('')}
+   </tbody></table>
+   <p class="hint" style="margin-top:10px">Titik mulai jendela: Type A dari status <i>Done</i>; Type B dari <i>offer terkirim/converted</i>. Lama jendela dibekukan saat penugasan dibuat.</p></div>`;}};
+function statusBadge(s){return s==='Plan'?'<span class="badge b-gray">Plan</span>':s==='In Progress'?'<span class="badge b-amber">In Progress</span>':'<span class="badge b-green">Done</span>';}
+S['CAM-03']={render(){const done=ASSIGN.filter(a=>a.phase==='Matang'&&inScope(a.cus.branch));
+  const ret=done.filter(a=>a.outcome==='Retained').length,ch=done.filter(a=>a.outcome==='Churned').length;
+  return pagehead('CAM-03','Campaign Effectiveness, Outcome & ROI','Hanya penugasan matang yang dihitung. ROI observasional (Tahap-01).')+
+  `<div class="grid g4" style="margin-bottom:16px">
+    <div class="kpi good"><div class="l">Retained</div><div class="v">${ret}</div><div class="s">berhasil</div></div>
+    <div class="kpi"><div class="l">Churned</div><div class="v">${ch}</div><div class="s">gagal</div></div>
+    <div class="kpi good"><div class="l">Saved profit</div><div class="v">${moneyM(1840000000)}</div><div class="s">Σ profitability retained</div></div>
+    <div class="kpi accent"><div class="l">ROI</div><div class="v">338%</div><div class="s">(saved − cost) ÷ cost</div></div>
+  </div>
+  <div class="grid g2">
+   <div class="card"><h3>Funnel Type B — "Special for You"</h3><p class="csub">Terkirim → transaksi ter-atribusi</p>
+    <div class="funnel">
+     <div class="fstep">Offer terkirim <span class="fn">1.240</span></div>
+     <div class="fstep" style="background:#2A4A80">Dilihat <span class="fn">870</span></div>
+     <div class="fstep" style="background:var(--terra-l)">Diterima (tap) <span class="fn">410</span></div>
+     <div class="fstep" style="background:var(--terra)">Bertransaksi <span class="fn">228</span></div>
+    </div><p class="hint" style="margin-top:8px">Konversi total 18,4% · nilai transaksi ter-atribusi Rp 612 jt</p></div>
+   <div class="card"><h3>Ranking strategi berdasarkan ROI</h3><p class="csub">Efisiensi, bukan sekadar jumlah retained</p><div class="chartbox"><canvas id="cam-roi"></canvas></div></div>
+  </div>`;},
+  onShow(){chart('cam-roi',{type:'bar',data:{labels:STRATEGIES.map(s=>s.code),datasets:[{label:'ROI %',data:[420,510,260,180],backgroundColor:TERRA,borderRadius:5}]},options:{indexAxis:'y',maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{callback:v=>v+'%'}}}}});}};
+
+/* --- Customer 360 --- */
+S['C360-01']={render(){const c=window._openCus||scoped()[0];
+  const hist=ASSIGN.filter(a=>a.cus.id===c.id);
+  return pagehead('C360-01','Customer 360',null,`<button class="btn btn-sm" onclick="toast('Export profil PDF (mockup)')">⬇ PDF</button>`)+
+  `<div class="card" style="margin-bottom:16px"><div style="display:flex;gap:10px;align-items:center;margin-bottom:6px"><input type="text" placeholder="Cari ID / nama nasabah…" style="flex:1" onkeydown="if(event.key==='Enter')globalSearch(this.value)"><button class="btn btn-sm" onclick="toast('Cari (mockup)')">Cari</button></div></div>
+  <div class="grid g2" style="margin-bottom:16px">
+    <div class="card"><h3>${c.name}</h3><p class="csub">${c.id} · ${c.type} · ${c.branch}</p>
+      <div class="grid g4" style="gap:10px">
+        <div><div class="hint">Churn</div>${tierBadge(c.ct)} <b>${c.churn}</b></div>
+        <div><div class="hint">Profit</div>${profitBadge(c.pt)} <b>${moneyM(c.profitRp)}</b></div>
+        <div><div class="hint">Segmen</div><span class="badge b-terra">${c.persona}</span></div>
+        <div><div class="hint">Cluster</div><span class="badge ${c.cluster.hot?'b-red':'b-navy'}">${c.cluster.c}</span></div>
+      </div>
+      <div class="hint" style="margin-top:12px">Produk dimiliki</div><div>${c.prods.map(p=>`<span class="badge b-gray" style="margin:2px">${p}</span>`).join('')}</div>
+    </div>
+    <div class="card"><h3>6 produk rekomendasi</h3><p class="csub">Confidence & Lift</p>
+      <div class="split"><div>${c.recsB.map(recRow).join('')}</div><div>${c.recsD.map(recRow).join('')}</div></div>
+    </div>
+  </div>
+  <div class="card"><h3>Riwayat strategi</h3><p class="csub">Penugasan, progres, hasil & funnel</p>
+    ${hist.length?`<table><thead><tr><th>Strategi</th><th>Owner</th><th>Status</th><th>Fase</th><th>Hasil</th></tr></thead><tbody>
+      ${hist.map(a=>`<tr><td><b class="mono">${a.strat.code}</b> ${a.strat.name}</td><td>${a.owner}</td><td>${statusBadge(a.status)}</td><td class="hint">${a.phase}</td><td>${a.outcome==='Retained'?'<span class="badge b-green">Retained</span>':a.outcome==='Churned'?'<span class="badge b-red">Churned</span>':'<span class="hint">—</span>'} ${a.converted?'<span class="badge b-terra">Converted</span>':''}</td></tr>`).join('')}
+      </tbody></table>`:'<p class="hint">Belum ada strategi ditugaskan untuk nasabah ini.</p>'}
+  </div>`;}};
+
+/* --- Alerts --- */
+S['NOT-01']={render(){const alerts=[
+   {t:'red',i:'⚠',x:'Nasabah profit tinggi naik ke churn Hi',s:'PT Maju Bersama 3 · Jakarta Pusat · 2 jam lalu',go:'C360-01'},
+   {t:'amber',i:'📈',x:'Lonjakan jumlah HOT TARGET di Bandung',s:'+14 nasabah minggu ini',go:'CPI-01'},
+   {t:'navy',i:'🎯',x:'Strategi POF-01 ditugaskan ke Anda',s:'5 nasabah · owner RM Jakarta',go:'CAM-02'},
+   {t:'green',i:'✓',x:'Offer diterima & converted',s:'Sari Wijaya menyelesaikan transaksi offer',go:'CAM-03'},
+   {t:'navy',i:'📊',x:'Hasil kampanye siap ditinjau',s:'NPS-01 jendela pengamatan berakhir',go:'CAM-03'}];
+  return pagehead('NOT-01','Alert / Notification Center','Peringatan ter-scope role. Klik untuk loncat ke layar terkait.')+
+  `<div class="card">${alerts.map(a=>`<div class="rowlink" onclick="route('${a.go}')" style="display:flex;gap:12px;padding:12px;border-bottom:1px solid var(--line);align-items:flex-start">
+     <div class="badge b-${a.t==='red'?'red':a.t==='amber'?'amber':a.t==='green'?'green':'navy'}" style="width:30px;height:30px;border-radius:8px;display:grid;place-items:center;font-size:15px">${a.i}</div>
+     <div><b>${a.x}</b><div class="hint">${a.s}</div></div><span style="margin-left:auto;color:var(--hint)">›</span></div>`).join('')}</div>`;}};
+
+/* --- Setup --- */
+S['SET-01']={render(){return setupForm('SET-01','Threshold Tiering Churn','Batas Lo / Med / Hi churn index.',[['Batas atas Lo','< 50'],['Batas atas Med','50 – 79'],['Batas Hi','≥ 80']]);}};
+S['SET-02']={render(){return setupForm('SET-02','Threshold Tiering Profitability','Batas Lo / Med / Hi profitability.',[['Batas atas Lo','< 50'],['Batas atas Med','50 – 79'],['Batas Hi','≥ 80']]);}};
+S['SET-03']={render(){return setupForm('SET-03','Recommendation Settings','Jumlah produk yang direkomendasikan.',[['Produk banking','3'],['Produk digital','3']]);}};
+S['SET-04']={render(){if(!isPusat())return pagehead('SET-04','User & Role Management')+`<div class="rolebanner" style="display:block">Hanya Role Pusat / Admin yang dapat mengelola user & role.</div>`;
+  const users=[['admin.hq','Pusat','Semua'],['kepala.bandung','Cabang','Bandung'],['rm.jakarta','Cabang','Jakarta Pusat'],['analis.hq','Pusat','Semua']];
+  return pagehead('SET-04','User & Role Management','Kelola user, role, dan cakupan cabang.',`<button class="btn btn-primary btn-sm" onclick="toast('Buat user (mockup)')">+ User</button>`)+
+  `<div class="card"><table><thead><tr><th>Username</th><th>Role</th><th>Cabang</th><th></th></tr></thead><tbody>
+   ${users.map(u=>`<tr><td>${u[0]}</td><td><span class="badge ${u[1]==='Pusat'?'b-navy':'b-gray'}">${u[1]}</span></td><td>${u[2]}</td><td><button class="btn btn-sm" onclick="toast('Reset password (mockup)')">Reset password</button> <button class="btn btn-sm" onclick="toast('Hapus (mockup)')">Hapus</button></td></tr>`).join('')}
+   </tbody></table></div>`;}};
+S['SET-05']={render(){return setupForm('SET-05','Observation, Success & Cost Settings','Jendela pengamatan, definisi sukses & parameter biaya/ROI.',
+  [['Jendela observasi default','90 hari'],['Definisi retained','Churn turun < tier Hi + aktif'],['Mata uang','IDR'],['Basis saved profit','Profitability + transaksi ter-atribusi'],['Mode ROI','Observasional (Tahap-01)']]);}};
+S['SET-06']={render(){return setupForm('SET-06','Notification Rules','Aktifkan & atur ambang tiap jenis alert.',
+  [['Profit tinggi → churn Hi','Aktif'],['Lonjakan HOT TARGET','Aktif · ambang +10'],['Strategi ditugaskan','Aktif'],['Hasil kampanye siap','Aktif']]);}};
+S['SET-07']={render(){return setupForm('SET-07','Kelola Nama Persona/Segmen','Ubah label persona agar sesuai bahasa bisnis (opsional).',
+  PERSONAS.map(p=>[p,p]));}};
+function setupForm(code,title,desc,rows){return pagehead(code,title,desc)+
+  `<div class="card" style="max-width:560px">${rows.map(r=>`<div class="field"><label>${r[0]}</label><input type="text" value="${r[1]}"></div>`).join('')}
+   <button class="btn btn-primary" onclick="toast('Perubahan disimpan (mockup)')">Simpan perubahan</button> <span class="hint" style="margin-left:8px">Perubahan tercatat & diaudit.</span></div>`;}
+
+/* --- System --- */
+S['SYS-01']={render(){return pagehead('SYS-01','User Profile','Data akun & preferensi.')+
+  `<div class="card" style="max-width:520px"><div class="field"><label>Nama</label><input type="text" value="RM Jakarta"></div>
+   <div class="field"><label>Role</label><input type="text" value="${isPusat()?'Pusat':'Cabang'}" disabled></div>
+   <div class="field"><label>Cabang</label><input type="text" value="${isPusat()?'Semua':state.cabangBranch}" disabled></div>
+   <button class="btn" onclick="toast('Ganti password (mockup)')">Ganti password</button></div>`;}};
+S['SYS-02']={render(){const g=[['Churn Index','Skor 0–100 kemungkinan nasabah berhenti bertransaksi.'],['DBI','Davies-Bouldin Index — makin rendah makin baik pemisahan cluster.'],['Confidence','Probabilitas nasabah mengambil produk yang direkomendasikan.'],['Lift','Seberapa jauh rekomendasi mengungguli peluang acak (>1 bermakna).'],['HOT TARGET','Kuadran C3: profit tinggi & churn tinggi — prioritas utama.'],['ROI observasional','Semua retained dianggap profit terselamatkan (tanpa holdout).']];
+  return pagehead('SYS-02','Help & Glossary','Definisi istilah & panduan singkat.')+
+  `<div class="card">${g.map(x=>`<div style="padding:10px 0;border-bottom:1px solid var(--line)"><b>${x[0]}</b><div class="hint">${x[1]}</div></div>`).join('')}</div>`;}};
+
+/* ============================ NAV & ROUTER ============================ */
+const NAV=[
+ {g:'Analitik & wawasan',items:[
+   {id:'CI-01',ico:'▦',label:'Corporate Insight'},
+   {id:'CH-01',ico:'▼',label:'Churn Analysis',sub:[['CH-01','Overview'],['CH-02','Ranking Top-50'],['CH-03','Model Performance']]},
+   {id:'CP-01',ico:'₿',label:'Profitability',sub:[['CP-01','Overview'],['CP-02','Customer List'],['CP-03','Model Performance']]},
+   {id:'CS-01',ico:'◈',label:'Segmentation',sub:[['CS-01','Overview'],['CS-02','Characteristics'],['CS-03','Product Usage'],['CS-04','Model Performance']]},
+   {id:'CPI-01',ico:'▣',label:'CPI Matrix',sub:[['CPI-01','Matrix Overview'],['CPI-02','HOT Target']]},
+   {id:'RS-01',ico:'★',label:'Recommender',sub:[['RS-01','Recommendations'],['RS-02','Model Performance']]},
+ ]},
+ {g:'Aksi & retensi',items:[
+   {id:'CAM-01',ico:'◎',label:'Campaign',sub:[['CAM-01','Registry'],['CAM-02','Assignment'],['CAM-03','Effectiveness & ROI']]},
+   {id:'C360-01',ico:'◐',label:'Customer 360'},
+   {id:'NOT-01',ico:'🔔',label:'Alert Center'},
+ ]},
+ {g:'Administrasi',items:[
+   {id:'SET-01',ico:'⚙',label:'Setup',sub:[['SET-01','Threshold Churn'],['SET-02','Threshold Profit'],['SET-03','Recommendation'],['SET-04','User & Role'],['SET-05','Observation & Cost'],['SET-06','Notification Rules'],['SET-07','Persona/Segmen']]},
+   {id:'SYS-01',ico:'ⓘ',label:'System',sub:[['SYS-01','User Profile'],['SYS-02','Help & Glossary']]},
+ ]},
+];
+function buildNav(){let h='';NAV.forEach(grp=>{h+=`<div class="navgrp"><div class="glabel">${grp.g}</div>`;
+  grp.items.forEach(it=>{const pusatOnly=false;
+    h+=`<button class="navitem" data-id="${it.id}" onclick="route('${it.id}')"><span class="ico">${it.ico}</span>${it.label}</button>`;
+    if(it.sub){h+=`<div class="navsub">`+it.sub.map(s=>`<button class="navitem" data-id="${s[0]}" onclick="route('${s[0]}')">${s[1]}${s[0]==='SET-04'?' <span class="pill">Pusat</span>':''}${s[0]==='CAM-01'?' <span class="pill">Pusat</span>':''}</button>`).join('')+`</div>`;}
+  });h+=`</div>`;});
+  el('nav').innerHTML=h;}
+
+function route(id){if(!S[id]){toast('Layar '+id+' belum ada');return;}
+  killCharts();state.screen=id;
+  document.querySelectorAll('.navitem').forEach(n=>n.classList.toggle('active',n.dataset.id===id));
+  el('main').innerHTML=S[id].render();
+  el('main').scrollTop=0;
+  if(S[id].onShow)try{S[id].onShow();}catch(e){console.warn(e);}
+}
+window.route=route;
+window.openCustomer=id=>{window._openCus=CUSTOMERS.find(c=>c.id===id);route('C360-01');};
+window.globalSearch=q=>{if(!q)return;const c=CUSTOMERS.find(c=>c.name.toLowerCase().includes(q.toLowerCase())||c.id.toLowerCase()===q.toLowerCase());if(c){window._openCus=c;route('C360-01');}else toast('Nasabah tidak ditemukan');};
+
+function setRole(r){state.role=r;el('r-pusat').classList.toggle('on',r==='pusat');el('r-cabang').classList.toggle('on',r==='cabang');
+  el('uname').textContent=r==='pusat'?'Admin HQ':'RM '+state.cabangBranch.split(' ')[0];el('uav').textContent=r==='pusat'?'HQ':'RM';
+  if(r==='cabang')state.branch=state.cabangBranch;else state.branch='Semua Cabang';
+  fillBranchSel();route(state.screen);
+  toast(r==='pusat'?'Role Pusat — akses semua cabang':'Role Cabang — hanya '+state.cabangBranch);}
+window.setRole=setRole;
+function fillBranchSel(){const s=el('branchSel');const opts=isPusat()?['Semua Cabang',...BRANCHES]:[state.cabangBranch];
+  s.innerHTML=opts.map(o=>`<option ${o===state.branch?'selected':''}>${o}</option>`).join('');s.disabled=!isPusat();}
+
+function doLogin(){el('login').style.display='none';el('app').style.display='grid';buildNav();fillBranchSel();route('CI-01');}
+window.doLogin=doLogin;
+</script>
+</body>
+</html>
