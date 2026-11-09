@@ -60,3 +60,8 @@ check_matrix_ready.sql
 deploy_backend_debug.ps1
 deploy_backend_with_logging.sh
 docs/_clean.ps1
+
+# EC2 deploy artefacts (server-only)
+/certs/
+/frontend-dist/
+dist.tar.gz
