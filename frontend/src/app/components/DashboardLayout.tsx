@@ -26,7 +26,7 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import { useI18n } from '../i18n';
-import { AnvAILogo } from './AnvAILogo';
+import { FraudLogo } from './FraudLogo';
 
 // Map icon string from API to Lucide component
 const iconMap: Record<string, LucideIcon> = {
@@ -92,14 +92,8 @@ function buildMenuFromApi(apiMenus: ApiMenu[], isAdmin: boolean): DisplayMenu[] 
     // Hide ADMIN-only admin menus from non-admin roles (e.g. "cabang").
     if (!isAdmin && ADMIN_ONLY_PATHS.includes((path || '').toLowerCase())) return true;
     const k = key.toLowerCase();
-    const p = path.toLowerCase();
-    // Profitability module hidden for this bank.
-    if (c === 'CP' || c === 'M4' || k === 'menu_cp' || k === 'menu_m4' || p.startsWith('/profitability')) return true;
     // "Profil & Akun" (SYS) group removed from sidebar — moved to the top-right profile dropdown.
     if (c === 'SYS' || c === 'SYS-01' || c === 'SYS-03' || k === 'menu_sys') return true;
-    // "Hot Target Deep-Dive" removed from the sidebar — reached by pressing
-    // "Lanjutkan" on the Select Customer Matrix page. The route still works.
-    if (k === 'menu_cpi_02' || p === '/cpi-matrix/hot-target') return true;
     return false;
   };
 
@@ -132,38 +126,25 @@ interface MenuGroup {
   menuCodes: string[];
 }
 
+// Sidebar sections. A top-level menu (auth.menu.code) shows only in the group
+// that lists its code; unknown codes fall into the "other" block at the end.
+// Add new fraud menu codes to FRAUD DETECTION as the pages are built.
 const MENU_GROUPS: MenuGroup[] = [
   {
-    titleId: 'ANALITIK & WAWASAN',
-    titleEn: 'ANALYTICS & INSIGHTS',
-    menuCodes: ['CI', 'M1', 'CH', 'AUM', 'RS', 'M5', 'M3', 'CS', 'M2'],
-  },
-  {
-    titleId: 'AKSI & RETENSI',
-    titleEn: 'ACTION & RETENTION',
-    menuCodes: ['CPI', 'CAM', 'C360', 'M6', 'NOT', 'M7'],
-  },
-  {
-    titleId: 'MACHINE LEARNING',
-    titleEn: 'MACHINE LEARNING',
-    menuCodes: ['ML'],
+    titleId: 'DETEKSI FRAUD',
+    titleEn: 'FRAUD DETECTION',
+    menuCodes: ['HOME'],
   },
   {
     titleId: 'ADMINISTRASI',
     titleEn: 'ADMINISTRATION',
-    menuCodes: ['SET', 'ADM', 'M8', 'SYS'],
+    menuCodes: ['ADM', 'SYS'],
   },
 ];
 
-// Map certain routes to the sidebar item that should appear active for them.
-// The Hot Target page is reached via "Lanjutkan" on Select Customer Matrix and
-// is not its own menu item, so it should keep "Select Customer Matrix" active.
-// The Action Plan Template page is reached via the "Detail" button on the Action
-// Plan Detail list, so it should keep "Action Plan Detail" (/cpi-matrix/promo-engine) active.
-const ACTIVE_PATH_ALIAS: Record<string, string> = {
-  '/cpi-matrix/hot-target': '/cpi-matrix/overview',
-  '/campaign/action-plan-template': '/cpi-matrix/promo-engine',
-};
+// Map certain routes to the sidebar item that should appear active for them
+// (for detail pages reached from a list that are not menu items themselves).
+const ACTIVE_PATH_ALIAS: Record<string, string> = {};
 function effectivePath(pathname: string): string {
   return ACTIVE_PATH_ALIAS[pathname] ?? pathname;
 }
@@ -288,17 +269,9 @@ export function DashboardLayout() {
         }
       }
     } catch (e) {}
-    
-    // Default fallback structure (Profitability menu removed for Bank Bali)
-    return [
-      { key: 'menu_m1', code: 'M1', icon: LayoutDashboard, path: '/executive', children: [] },
-      { key: 'menu_m2', code: 'M2', icon: Users, path: '/segmentation', children: [] },
-      { key: 'menu_m3', code: 'M3', icon: TrendingDown, path: '/churn', children: [] },
-      { key: 'menu_m5', code: 'M5', icon: ShoppingBag, path: '/recommendation', children: [] },
-      { key: 'menu_m6', code: 'M6', icon: UserCircle, path: '/customer-profile', children: [] },
-      { key: 'menu_m7', code: 'M7', icon: BarChart3, path: '/reports', children: [] },
-      { key: 'menu_m8', code: 'M8', icon: Settings, path: '/settings', children: [] },
-    ];
+
+    // No menus from the API (not logged in yet / cache cleared): show only Home.
+    return [{ key: 'menu_home', code: 'HOME', icon: LayoutDashboard, path: '/home', children: [] }];
   }, [isAdmin]);
 
   // Auto-expand active accordion menu matching current route
@@ -359,11 +332,11 @@ export function DashboardLayout() {
             <div className="flex items-center justify-between">
               {isCollapsed ? (
                 <div className="w-full text-center">
-                  <AnvAILogo variant="icon" size="sm" />
+                  <FraudLogo variant="icon" size="sm" />
                 </div>
               ) : (
                 <div className="flex items-center gap-2 truncate">
-                  <AnvAILogo variant="icon" size="sm" />
+                  <FraudLogo variant="icon" size="sm" />
                   <div className="truncate">
                     <h1 className="text-xs font-black tracking-tight bg-gradient-to-r from-[#38BDF8] via-[#22D3EE] to-[#A5F3FC] bg-clip-text text-transparent uppercase truncate">
                       Fraud Detection
@@ -581,7 +554,7 @@ export function DashboardLayout() {
             </div>
             {/* Global footer */}
             <div className="mt-6 pt-3 border-t border-slate-200 text-center text-xs text-slate-400">
-              © 2026 <span className="font-semibold text-slate-500">ANVAIA</span> — {t.footer_text}
+              © 2026 <span className="font-semibold text-slate-500">Fraud Detection</span> — {t.footer_text}
             </div>
           </div>
         </main>

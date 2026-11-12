@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { DashboardLayout } from './components/DashboardLayout';
 import { Login } from './pages/Login';
 import { I18nProvider } from './i18n/I18nProvider';
+import { Home } from './pages/Home';
 import { CorporateInsight } from './pages/CorporateInsight';
 import { ChurnOverview } from './pages/ChurnOverview';
 import { ChurnRanking } from './pages/ChurnRanking';
@@ -65,9 +66,12 @@ const router = createBrowserRouter([
       </RequireAuth>
     ),
     children: [
-      // Redirect root to Corporate Insight
-      { index: true, element: <Navigate to="/corporate-insight" replace /> },
+      // Redirect root to the fraud Home page
+      { index: true, element: <Navigate to="/home" replace /> },
+      { path: 'home', element: <Home /> },
 
+      // ---- Legacy CPI pages (anvaia-bag). No longer in any menu since auth V35;
+      // ---- kept routable until the fraud pages replace them.
       // 1. Corporate Insight (no sub-menu, direct page)
       { path: 'corporate-insight', element: <CorporateInsight /> },
       { path: 'corporate-insight/overview', element: <CorporateInsight /> },
@@ -137,8 +141,8 @@ const router = createBrowserRouter([
       { path: 'settings/change-password', element: <ChangePassword /> },
       { path: 'settings/system-parameters', element: <SystemParameter /> },
 
-      // Catch-all → redirect to Corporate Insight
-      { path: '*', element: <Navigate to="/corporate-insight" replace /> },
+      // Catch-all → redirect to Home
+      { path: '*', element: <Navigate to="/home" replace /> },
     ],
   },
 ]);

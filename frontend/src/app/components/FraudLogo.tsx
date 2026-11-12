@@ -1,14 +1,14 @@
 import React from 'react';
 import { ShieldAlert } from 'lucide-react';
 
-interface AnvAILogoProps {
+interface FraudLogoProps {
   size?: 'sm' | 'md' | 'lg' | 'xl';
   variant?: 'full' | 'icon' | 'badge';
   className?: string;
   theme?: 'dark' | 'light' | 'auto';
 }
 
-export function AnvAILogo({ size = 'md', variant = 'full', className = '', theme = 'auto' }: AnvAILogoProps) {
+export function FraudLogo({ size = 'md', variant = 'full', className = '', theme = 'auto' }: FraudLogoProps) {
   const dimensions = {
     sm: { iconBox: 'w-7 h-7', iconSize: 'w-4 h-4', textTitle: 'text-xs', textSub: 'text-[9px]', gap: 'gap-2' },
     md: { iconBox: 'w-9 h-9', iconSize: 'w-5 h-5', textTitle: 'text-sm font-black', textSub: 'text-[10px]', gap: 'gap-2.5' },

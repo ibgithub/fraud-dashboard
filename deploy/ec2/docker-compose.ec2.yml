@@ -23,7 +23,8 @@ services:
       - DB_NAME=${DB_NAME}
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
-      - FLYWAY_ENABLED=${FLYWAY_ENABLED:-false}
+      # fraud_auth is our own DB, so auth-service runs its Flyway migrations.
+      - FLYWAY_ENABLED=${AUTH_FLYWAY_ENABLED:-true}
       - JWT_SECRET=${JWT_SECRET}
       - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS}
       - SWAGGER_ENABLED=${SWAGGER_ENABLED:-false}
@@ -47,7 +48,9 @@ services:
       - BAG_DB_NAME=${BAG_DB_NAME:-bag_demo}
       - BAG_DB_USER=${BAG_DB_USER:-${EXEC_DB_USER}}
       - BAG_DB_PASSWORD=${BAG_DB_PASSWORD:-${EXEC_DB_PASSWORD}}
-      - FLYWAY_ENABLED=${FLYWAY_ENABLED:-false}
+      # Keep OFF: analytics migrations are the legacy `churn` schema and would
+      # be created inside fraud_demo.
+      - FLYWAY_ENABLED=${ANALYTICS_FLYWAY_ENABLED:-false}
       - JWT_SECRET=${JWT_SECRET}
       - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS}
       - SWAGGER_ENABLED=${SWAGGER_ENABLED:-false}

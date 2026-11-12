@@ -14,7 +14,7 @@ spring:
       # The UI/base path within the context-path.
       context-path: /
       ui:
-        title: AnvAIa Monitoring
+        title: Fraud Dashboard Monitoring
 
 # Credentials for the SBA login page. Override via env in production.
 admin:
