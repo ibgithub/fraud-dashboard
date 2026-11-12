@@ -65,3 +65,6 @@ docs/_clean.ps1
 /certs/
 /frontend-dist/
 dist.tar.gz
+
+# Reference material with real/sample customer & transaction data (never commit)
+/reference/
