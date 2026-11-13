@@ -11,6 +11,9 @@ const en = {
 
   // Fraud Detection
   menu_home: 'Home',
+  menu_fg_ov: 'Overview',
+  menu_fg_live: 'Live Monitoring',
+  menu_fg_exec: 'Executive Summary',
 
   // ---- Legacy CPI menu labels (menus removed in auth V35; pages still routable)
   // 1. Corporate Insight

@@ -11,6 +11,9 @@ const id = {
 
   // Fraud Detection
   menu_home: 'Beranda',
+  menu_fg_ov: 'Ringkasan',
+  menu_fg_live: 'Pemantauan Live',
+  menu_fg_exec: 'Ringkasan Eksekutif',
 
   // ---- Legacy CPI menu labels (menus removed in auth V35; pages still routable)
   // 1. Corporate Insight

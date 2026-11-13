@@ -4,6 +4,9 @@ import { DashboardLayout } from './components/DashboardLayout';
 import { Login } from './pages/Login';
 import { I18nProvider } from './i18n/I18nProvider';
 import { Home } from './pages/Home';
+import { FraudOverview } from './pages/fraud/FraudOverview';
+import { FraudLive } from './pages/fraud/FraudLive';
+import { FraudExecutive } from './pages/fraud/FraudExecutive';
 import { CorporateInsight } from './pages/CorporateInsight';
 import { ChurnOverview } from './pages/ChurnOverview';
 import { ChurnRanking } from './pages/ChurnRanking';
@@ -69,6 +72,11 @@ const router = createBrowserRouter([
       // Redirect root to the fraud Home page
       { index: true, element: <Navigate to="/home" replace /> },
       { path: 'home', element: <Home /> },
+
+      // ---- Fraud Detection (FraudGuard) — mockup pages with hardcoded data
+      { path: 'fraud/overview', element: <FraudOverview /> },
+      { path: 'fraud/live', element: <FraudLive /> },
+      { path: 'fraud/executive', element: <FraudExecutive /> },
 
       // ---- Legacy CPI pages (anvaia-bag). No longer in any menu since auth V35;
       // ---- kept routable until the fraud pages replace them.

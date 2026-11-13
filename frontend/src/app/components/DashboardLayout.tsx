@@ -23,6 +23,8 @@ import {
   Grid3x3,
   Target,
   Bell,
+  Radio,
+  Briefcase,
   type LucideIcon,
 } from 'lucide-react';
 import { useI18n } from '../i18n';
@@ -44,6 +46,8 @@ const iconMap: Record<string, LucideIcon> = {
   Target,
   Bell,
   ShieldCheck,
+  Radio,
+  Briefcase,
 };
 
 function getIcon(iconName: string | null): LucideIcon {
@@ -128,12 +132,22 @@ interface MenuGroup {
 
 // Sidebar sections. A top-level menu (auth.menu.code) shows only in the group
 // that lists its code; unknown codes fall into the "other" block at the end.
-// Add new fraud menu codes to FRAUD DETECTION as the pages are built.
+// A group with no menus is not rendered; add menu codes as the fraud pages are built.
 const MENU_GROUPS: MenuGroup[] = [
   {
-    titleId: 'DETEKSI FRAUD',
-    titleEn: 'FRAUD DETECTION',
-    menuCodes: ['HOME'],
+    titleId: 'ANALITIK & WAWASAN',
+    titleEn: 'ANALYTICS & INSIGHTS',
+    menuCodes: ['HOME', 'FG-OV', 'FG-LIVE', 'FG-EXEC'],
+  },
+  {
+    titleId: 'AKSI & RETENSI',
+    titleEn: 'ACTION & RETENTION',
+    menuCodes: [],
+  },
+  {
+    titleId: 'MACHINE LEARNING',
+    titleEn: 'MACHINE LEARNING',
+    menuCodes: [],
   },
   {
     titleId: 'ADMINISTRASI',
