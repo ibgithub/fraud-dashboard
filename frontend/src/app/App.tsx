@@ -7,6 +7,9 @@ import { Home } from './pages/Home';
 import { FraudOverview } from './pages/fraud/FraudOverview';
 import { FraudLive } from './pages/fraud/FraudLive';
 import { FraudExecutive } from './pages/fraud/FraudExecutive';
+import { FraudAlertQueue } from './pages/fraud/FraudAlertQueue';
+import { FraudDailyReview } from './pages/fraud/FraudDailyReview';
+import { FraudReviewAnalyst } from './pages/fraud/FraudReviewAnalyst';
 import { CorporateInsight } from './pages/CorporateInsight';
 import { ChurnOverview } from './pages/ChurnOverview';
 import { ChurnRanking } from './pages/ChurnRanking';
@@ -77,6 +80,9 @@ const router = createBrowserRouter([
       { path: 'fraud/overview', element: <FraudOverview /> },
       { path: 'fraud/live', element: <FraudLive /> },
       { path: 'fraud/executive', element: <FraudExecutive /> },
+      { path: 'fraud/alerts', element: <FraudAlertQueue /> },
+      { path: 'fraud/daily-review', element: <FraudDailyReview /> },
+      { path: 'fraud/review', element: <FraudReviewAnalyst /> },
 
       // ---- Legacy CPI pages (anvaia-bag). No longer in any menu since auth V35;
       // ---- kept routable until the fraud pages replace them.

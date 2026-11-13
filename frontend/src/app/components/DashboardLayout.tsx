@@ -25,6 +25,9 @@ import {
   Bell,
   Radio,
   Briefcase,
+  ListChecks,
+  Sunrise,
+  ClipboardCheck,
   type LucideIcon,
 } from 'lucide-react';
 import { useI18n } from '../i18n';
@@ -48,6 +51,9 @@ const iconMap: Record<string, LucideIcon> = {
   ShieldCheck,
   Radio,
   Briefcase,
+  ListChecks,
+  Sunrise,
+  ClipboardCheck,
 };
 
 function getIcon(iconName: string | null): LucideIcon {
@@ -142,7 +148,7 @@ const MENU_GROUPS: MenuGroup[] = [
   {
     titleId: 'AKSI & RETENSI',
     titleEn: 'ACTION & RETENTION',
-    menuCodes: [],
+    menuCodes: ['FG-ALERT', 'FG-DAILY', 'FG-REVIEW'],
   },
   {
     titleId: 'MACHINE LEARNING',

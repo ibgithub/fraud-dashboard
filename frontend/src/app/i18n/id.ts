@@ -14,6 +14,9 @@ const id = {
   menu_fg_ov: 'Ringkasan',
   menu_fg_live: 'Pemantauan Live',
   menu_fg_exec: 'Ringkasan Eksekutif',
+  menu_fg_alert: 'Antrian Alert',
+  menu_fg_daily: 'Daily Review',
+  menu_fg_review: 'Review Analis',
 
   // ---- Legacy CPI menu labels (menus removed in auth V35; pages still routable)
   // 1. Corporate Insight

@@ -1,4 +1,6 @@
 import { useMemo, useState } from 'react';
+import { Link } from 'react-router';
+import { ALERTS, inPeriod, toCases } from './mockAlerts';
 import {
   Activity, AlertTriangle, Banknote, Briefcase, CalendarClock, Flame, LayoutDashboard, Layers, ListChecks, ShieldCheck, Users,
 } from 'lucide-react';
@@ -6,7 +8,7 @@ import {
   Bar, BarChart, CartesianGrid, Cell, ComposedChart, Legend, Line, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis,
 } from 'recharts';
 import {
-  CHANNEL_SHARE, DATA_GLANCE, HEALTH, HOUR_PROFILE, LAST_DAY, REVIEW_SHARE, SEGMENT_RATE, TOP_CASES, TYPE_COLOR, TYPE_SHARE,
+  CHANNEL_SHARE, DATA_GLANCE, HEALTH, HOUR_PROFILE, LAST_DAY, SEGMENT_RATE, TOP_CASES, TYPE_COLOR, TYPE_SHARE,
   type CaseRow, type DayRow,
 } from './mockData';
 import { useFg } from './text';
@@ -22,7 +24,9 @@ export function summarize(days: DayRow[]) {
   const nHigh = sum((d) => d.high);
   const nMedium = sum((d) => d.medium);
   const nAlerts = nHigh + nMedium;
-  const nCases = sum((d) => d.cases);
+  // Cases and customers come from the alert rows, so every page counts them the same way.
+  const rows = inPeriod(ALERTS, days);
+  const nCases = toCases(rows).length;
   const n = days.length;
   return {
     nDays: n,
@@ -31,7 +35,7 @@ export function summarize(days: DayRow[]) {
     nHigh,
     nMedium,
     nCases,
-    nCustomers: Math.round(nCases * 0.78),
+    nCustomers: new Set(rows.map((a) => a.cust)).size,
     alertRate: nAlerts / Math.max(nTxn, 1),
     amountFlagged: sum((d) => d.amountFlagged),
     amountTotal: sum((d) => d.amountTotal),
@@ -140,12 +144,18 @@ function DayBlock({ data }: { data: typeof LAST_DAY.complete }) {
   );
 }
 
+// The latest complete day uses the case count derived from the alert rows (same as Daily Review).
+const LAST_COMPLETE = {
+  ...LAST_DAY.complete,
+  stats: { ...LAST_DAY.complete.stats, cases: toCases(ALERTS.filter((a) => a.date === LAST_DAY.complete.date)).length },
+};
+
 function LastDayCard() {
   const { tr } = useFg();
   return (
     <Panel title={tr('ld_title')} desc={tr('ld_desc')} icon={CalendarClock}>
       <div className="space-y-4">
-        <DayBlock data={LAST_DAY.complete} />
+        <DayBlock data={LAST_COMPLETE} />
         <DayBlock data={LAST_DAY.partial} />
       </div>
     </Panel>
@@ -185,7 +195,8 @@ export function FraudOverview() {
       return { name: c.channel, n, flagged, rate: flagged / Math.max(n, 1) };
     });
 
-    return { k, types, daily, hourly, categories, channels, cases: casesInPeriod(days), reviewed: Math.round(k.nAlerts * REVIEW_SHARE) };
+    const reviewed = inPeriod(ALERTS, days).filter((a) => a.decision).length;
+    return { k, types, daily, hourly, categories, channels, cases: casesInPeriod(days), reviewed };
     // f/typeName are recreated every render; their output only depends on lang.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [period, lang]);
@@ -297,7 +308,8 @@ export function FraudOverview() {
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
-        <Panel className="xl:col-span-2" title={tr('ov_top_cases')} desc={tr('ov_top_cases_desc')} icon={ListChecks}>
+        <Panel className="xl:col-span-2" title={tr('ov_top_cases')} desc={tr('ov_top_cases_desc')} icon={ListChecks}
+               actions={<Link to="/fraud/alerts" className="text-xs font-semibold text-[#028DAA] hover:underline">{tr('see_all')}</Link>}>
           <CaseTable cases={d.cases} />
         </Panel>
         <div className="space-y-4">
@@ -315,7 +327,7 @@ export function FraudOverview() {
               <b className="text-slate-900 tabular-nums">{f.int(d.reviewed)} / {f.int(k.nAlerts)}</b>
             </div>
             <div className="mt-3"><ProgressBar value={d.reviewed} max={k.nAlerts} color={C.green} label={tr('ov_review_done')} /></div>
-            <p className="text-[11px] text-slate-400 mt-2">Review Analis · {tr('coming_soon')}</p>
+            <Link to="/fraud/review" className="inline-block text-xs font-semibold text-[#028DAA] hover:underline mt-2">{tr('ra_title')} →</Link>
           </Panel>
         </div>
       </div>

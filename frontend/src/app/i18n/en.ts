@@ -14,6 +14,9 @@ const en = {
   menu_fg_ov: 'Overview',
   menu_fg_live: 'Live Monitoring',
   menu_fg_exec: 'Executive Summary',
+  menu_fg_alert: 'Alert Queue',
+  menu_fg_daily: 'Daily Review',
+  menu_fg_review: 'Analyst Review',
 
   // ---- Legacy CPI menu labels (menus removed in auth V35; pages still routable)
   // 1. Corporate Insight

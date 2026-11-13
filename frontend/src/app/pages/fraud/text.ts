@@ -158,6 +158,84 @@ const T = {
   ls_highlights_desc: ['Alert tertinggi untuk tiap jenis anomali bulan Juni, dipilih otomatis dari data.', 'Top alert per anomaly type in June, picked automatically from the data.'],
   ls_hl_count: ['{n} alert pada jenis ini', '{n} alerts of this type'],
   ls_play_from: ['Putar dari sini', 'Play from here'],
+
+  // shared (action & retention)
+  col_reason: ['Alasan utama', 'Main reason'],
+  col_review: ['Tinjauan', 'Review'],
+  sev_low: ['Pantau', 'Watch'],
+  dec_confirmed: ['Terkonfirmasi mencurigakan', 'Confirmed suspicious'],
+  dec_dismissed: ['Wajar / ditolak', 'Dismissed (normal)'],
+  dec_escalate: ['Eskalasi', 'Escalate'],
+  prev: ['Sebelumnya', 'Previous'],
+  next: ['Berikutnya', 'Next'],
+  page: ['Halaman {p} dari {n}', 'Page {p} of {n}'],
+
+  // alert queue
+  aq_title: ['Antrian Alert', 'Alert Queue'],
+  aq_sub: ['Seluruh transaksi yang ditandai, dapat difilter, dikelompokkan per kasus, dan ditinjau.', 'All flagged transactions: filter, group by case, and review.'],
+  aq_src_all: ['Semua alert', 'All alerts'],
+  aq_src_pending: ['Belum ditinjau', 'Not yet reviewed'],
+  aq_src_queue: ['Antrean review', 'Review queue'],
+  aq_src_reviewed: ['Sudah ditinjau', 'Reviewed'],
+  aq_src_watch: ['Daftar pantau', 'Watchlist'],
+  aq_source: ['Sumber data', 'Source'],
+  aq_view: ['Tampilan', 'View'],
+  aq_view_row: ['Per transaksi', 'By transaction'],
+  aq_view_case: ['Per kasus', 'By case'],
+  aq_all_sev: ['Semua severity', 'All severities'],
+  aq_all_types: ['Semua jenis', 'All types'],
+  aq_all_categories: ['Semua kategori', 'All categories'],
+  aq_search: ['Cari ID, nasabah, kasus…', 'Search ID, customer, case…'],
+  aq_total: ['{n} data', '{n} records'],
+  aq_empty: ['Tidak ada data', 'No data'],
+  aq_empty_desc: ['Ubah filter atau periode.', 'Change the filters or period.'],
+  aq_empty_queue: ['Antrean kosong. Kirim kasus dari Daily Review.', 'The queue is empty. Send cases from Daily Review.'],
+  aq_undecided: ['belum', 'pending'],
+  aq_reviewed: ['Ditinjau', 'Reviewed'],
+  aq_dequeue: ['Keluarkan dari antrean', 'Remove from queue'],
+  aq_queue_note: ['Antrean review berlaku selama sesi ini saja (mockup, belum tersimpan di server).', 'The review queue only lasts for this session (mockup, not stored on a server).'],
+
+  // daily review
+  dr_title: ['Daily Review (D-1)', 'Daily Review (D-1)'],
+  dr_sub: ['Tinjauan harian: kasus teratas, pola, dan nasabah yang berulang muncul. Dibandingkan dengan rata-rata 7 hari sebelumnya.', 'Daily review: top cases, patterns, and repeat customers. Compared with the previous 7-day average.'],
+  dr_days: ['Daftar hari', 'Days'],
+  dr_alerts_short: ['alert', 'alerts'],
+  dr_vs_avg: ['rata-rata 7 hari: {avg} ({x}x)', '7-day average: {avg} ({x}x)'],
+  dr_no_baseline: ['tanpa pembanding 7 hari', 'no 7-day baseline'],
+  dr_customers: ['{n} nasabah', '{n} customers'],
+  dr_types: ['Jenis anomali hari ini', 'Anomaly types today'],
+  dr_no_alerts: ['Tidak ada alert pada hari ini', 'No alerts today'],
+  dr_hourly: ['Alert per jam', 'Alerts per hour'],
+  dr_cases: ['Kasus hari ini', "Today's cases"],
+  dr_cases_desc: ['Diurutkan dari skor tertinggi. "Tindaklanjuti" memasukkan ke antrean review.', 'Sorted by highest score. "Follow up" adds it to the review queue.'],
+  dr_follow_up: ['Tindaklanjuti', 'Follow up'],
+  dr_queued: ['Di antrean', 'Queued'],
+  dr_repeat: ['Nasabah berulang', 'Repeat customers'],
+  dr_repeat_desc: ['Ter-flag hari ini dan juga pada hari-hari sebelumnya dalam 7 hari terakhir.', 'Flagged today and also on earlier days within the last 7 days.'],
+  dr_no_repeat: ['Tidak ada nasabah berulang.', 'No repeat customers.'],
+  dr_today: ['Alert hari ini', 'Alerts today'],
+  dr_prev_days: ['Hari ter-flag (7 hari lalu)', 'Flagged days (previous 7)'],
+
+  // analyst review
+  ra_title: ['Review Analis', 'Analyst Review'],
+  ra_sub: ['Hasil tinjauan analis atas alert: seberapa banyak yang dikonfirmasi, per jenis anomali dan severity.', 'Analyst review results on alerts: how many are confirmed, by anomaly type and severity.'],
+  ra_how_t: ['Tanpa retrain otomatis.', 'No automatic retraining.'],
+  ra_how_b: ['Keputusan analis disimpan untuk mengukur seberapa sering alert benar-benar dianggap mencurigakan. Ini satu-satunya ukuran "ketepatan" yang nyata, dan dapat diekspor sebagai calon label untuk model supervised di masa depan.', 'Analyst decisions are stored to measure how often alerts are actually judged suspicious. This is the only real measure of "precision", and it can be exported as candidate labels for a future supervised model.'],
+  ra_reviewed: ['Ditinjau', 'Reviewed'],
+  ra_reviewed_sub: ['{p} dari alert', '{p} of alerts'],
+  ra_pending: ['Belum ditinjau', 'Pending'],
+  ra_queue: ['{n} di antrean review', '{n} in the review queue'],
+  ra_by_type: ['Tingkat konfirmasi per jenis anomali', 'Confirmation rate by anomaly type'],
+  ra_by_type_desc: ['Terkonfirmasi / (terkonfirmasi + ditolak). Jenis dengan tingkat konfirmasi rendah mungkin perlu ambang atau fitur yang diperbaiki.', 'Confirmed / (confirmed + dismissed). Types with a low confirmation rate may need threshold or feature tuning.'],
+  ra_confirm_rate: ['Tingkat konfirmasi', 'Confirmation rate'],
+  ra_rate_note: ['Angka baru bermakna setelah cukup banyak alert ditinjau; saat sedikit, anggap sebagai indikasi awal.', 'The figures become meaningful only after enough alerts are reviewed; with few, treat them as early indications.'],
+  ra_by_sev: ['Per severity', 'By severity'],
+  ra_recent: ['Keputusan terbaru', 'Recent decisions'],
+  ra_export: ['Ekspor CSV', 'Export CSV'],
+  ra_empty: ['Belum ada tinjauan', 'No reviews yet'],
+  ra_analyst: ['Analis', 'Analyst'],
+  ra_when: ['Waktu', 'When'],
+  ra_note: ['Catatan', 'Note'],
 } satisfies Record<string, Entry>;
 
 export type TextKey = keyof typeof T;
@@ -179,6 +257,24 @@ const TYPE_LABEL: Record<AnomalyType, Entry> = {
   CAMPURAN: ['Campuran', 'Mixed'],
 };
 
+// Main-reason templates per anomaly type; {a} and {b} are filled with numbers per alert.
+const REASON: Record<AnomalyType, Entry> = {
+  SOCIAL_ENGINEERING: ['Penerima pertama kali dengan nominal {a}x rata-rata pribadi 30 hari', 'First-ever recipient with an amount {a}x the 30-day personal average'],
+  PENERIMA_BARU: ['Penerima baru; {b} penerima berbeda dalam 1 jam', 'New recipient; {b} distinct recipients in 1 hour'],
+  PENYIMPANGAN_KEBIASAAN: ['Nominal {a}x rata-rata pribadi 30 hari', 'Amount {a}x the 30-day personal average'],
+  NOMINAL_TIDAK_WAJAR: ['Nominal di atas persentil 99 nasabah selama 90 hari ({a}x median)', "Amount above the customer's 99th percentile over 90 days ({a}x median)"],
+  LONJAKAN_FREKUENSI: ['{a} transaksi dalam 15 menit, biasanya {b} per hari', '{a} transactions in 15 minutes, usually {b} per day'],
+  KEGAGALAN_BERULANG: ['{b} transaksi gagal dalam 1 jam lalu berhasil', '{b} failed transactions in 1 hour, then a success'],
+  NOMINAL_BERULANG: ['Nominal identik {b}x dalam 10 menit', 'Identical amount {b}x in 10 minutes'],
+  PENAMPUNG_FANIN: ['Rekening tujuan menerima dari {a} pengirim berbeda dalam 24 jam', 'Destination account received from {a} different payers in 24 hours'],
+  WAKTU_TIDAK_BIASA: ['Transaksi dini hari, {b} jam di luar jam kebiasaan nasabah', 'Early-morning transaction, {b} hours outside the usual hours'],
+  PERANGKAT_BERBAGI: ['Perangkat dipakai {b} akun berbeda dalam 30 hari', 'Device used by {b} different accounts in 30 days'],
+  KONDISI_SISTEM: ['Lonjakan gagal pada kanal ({a}% dalam 1 jam)', 'Channel failure spike ({a}% in 1 hour)'],
+  AKTIVITAS_NON_FINANSIAL: ['{a} aktivitas non-finansial dalam 24 jam', '{a} non-financial activities in 24 hours'],
+  DATA_TIDAK_VALID: ['Nominal nol atau negatif', 'Zero or negative amount'],
+  CAMPURAN: ['Kombinasi beberapa sinyal lemah (tidak ada pola dominan)', 'A mix of weak signals (no dominant pattern)'],
+};
+
 const WEEKDAY: Entry[] = [
   ['Minggu', 'Sunday'], ['Senin', 'Monday'], ['Selasa', 'Tuesday'], ['Rabu', 'Wednesday'],
   ['Kamis', 'Thursday'], ['Jumat', 'Friday'], ['Sabtu', 'Saturday'],
@@ -194,7 +290,9 @@ export function useFg() {
     return s;
   };
   const typeName = (code: AnomalyType) => TYPE_LABEL[code][li];
+  const reason = (r: { type: AnomalyType; a: number; b: number }) =>
+    REASON[r.type][li].replaceAll('{a}', String(r.a)).replaceAll('{b}', String(r.b));
   const weekday = (d: number) => WEEKDAY[d][li];
   const locale = lang === 'en' ? 'en-US' : 'id-ID';
-  return { tr, typeName, weekday, lang, locale };
+  return { tr, typeName, reason, weekday, lang, locale };
 }

@@ -102,7 +102,7 @@ export function Panel({ title, desc, icon: Icon, actions, children, className = 
 }
 
 export function StatCard({ icon: Icon, label, value, sub, hint, tone }: {
-  icon?: LucideIcon; label: string; value: string; sub?: string; hint?: string; tone?: 'neg';
+  icon?: LucideIcon; label: string; value: string; sub?: string; hint?: string; tone?: 'neg' | 'pos';
 }) {
   return (
     <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm" title={hint}>
@@ -110,7 +110,7 @@ export function StatCard({ icon: Icon, label, value, sub, hint, tone }: {
         {Icon && <Icon className="w-3.5 h-3.5" aria-hidden="true" />}
         {label}
       </div>
-      <div className={`text-2xl font-bold mt-1 ${tone === 'neg' ? 'text-red-600' : 'text-slate-900'}`}>{value}</div>
+      <div className={`text-2xl font-bold mt-1 ${tone === 'neg' ? 'text-red-600' : tone === 'pos' ? 'text-emerald-600' : 'text-slate-900'}`}>{value}</div>
       {sub && <div className="text-xs text-slate-500 mt-0.5">{sub}</div>}
     </div>
   );
@@ -145,9 +145,64 @@ export function Badge({ tone = 'neutral', dot, children }: { tone?: Tone; dot?: 
   );
 }
 
-export function SeverityBadge({ sev }: { sev: Severity }) {
+export function SeverityBadge({ sev }: { sev: Severity | 'low' }) {
   const { tr } = useFg();
+  if (sev === 'low') return <Badge tone="accent" dot>{tr('sev_low')}</Badge>;
   return <Badge tone={sev} dot>{tr(sev === 'high' ? 'sev_high' : 'sev_medium')}</Badge>;
+}
+
+export function DecisionBadge({ d }: { d: 'confirmed' | 'dismissed' | 'escalate' | null }) {
+  const { tr } = useFg();
+  if (!d) return <span className="text-[11px] text-slate-400">{tr('aq_undecided')}</span>;
+  const tone: Tone = d === 'confirmed' ? 'high' : d === 'dismissed' ? 'green' : 'accent';
+  return <Badge tone={tone}>{tr(`dec_${d}` as TextKey)}</Badge>;
+}
+
+// ---- form controls ------------------------------------------------------------------------
+export function Segmented<K extends string>({ value, options, onChange, label, disabled }: {
+  value: K; options: { key: K; label: string }[]; onChange: (k: K) => void; label: string; disabled?: K[];
+}) {
+  return (
+    <div className="inline-flex flex-wrap rounded-xl bg-white border border-slate-200 p-1 shadow-sm" role="group" aria-label={label}>
+      {options.map((o) => (
+        <button
+          key={o.key}
+          type="button"
+          aria-pressed={value === o.key}
+          disabled={disabled?.includes(o.key)}
+          onClick={() => onChange(o.key)}
+          className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition disabled:opacity-40 ${value === o.key ? 'bg-[#13385E] text-white shadow' : 'text-slate-600 hover:bg-slate-100'}`}
+        >
+          {o.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+export function SelectBox({ value, onChange, label, children }: { value: string; onChange: (v: string) => void; label: string; children: ReactNode }) {
+  return (
+    <select
+      value={value}
+      aria-label={label}
+      onChange={(e) => onChange(e.target.value)}
+      className="px-3 py-2 text-xs border border-slate-200 rounded-lg bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#028DAA]/40"
+    >
+      {children}
+    </select>
+  );
+}
+
+export function Pager({ page, pages, onChange }: { page: number; pages: number; onChange: (p: number) => void }) {
+  const { tr } = useFg();
+  const btn = 'px-3 py-1.5 text-xs font-semibold rounded-lg border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-40';
+  return (
+    <nav className="flex items-center justify-end gap-3 mt-3" aria-label="pagination">
+      <button type="button" className={btn} disabled={page <= 1} onClick={() => onChange(page - 1)}>{tr('prev')}</button>
+      <span className="text-xs text-slate-500">{tr('page', { p: page, n: Math.max(pages, 1) })}</span>
+      <button type="button" className={btn} disabled={page >= pages} onClick={() => onChange(page + 1)}>{tr('next')}</button>
+    </nav>
+  );
 }
 
 export function TypeBadge({ type }: { type: AnomalyType }) {
@@ -185,19 +240,12 @@ export function PeriodBar({ value, onChange }: { value: PeriodKey; onChange: (p:
   const days = periodDays(value);
   return (
     <div className="flex items-center gap-3 flex-wrap">
-      <div className="inline-flex flex-wrap rounded-xl bg-white border border-slate-200 p-1 shadow-sm" role="group" aria-label={tr('period_label')}>
-        {(Object.keys(PERIOD_LABEL) as PeriodKey[]).map((k) => (
-          <button
-            key={k}
-            type="button"
-            aria-pressed={value === k}
-            onClick={() => onChange(k)}
-            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition ${value === k ? 'bg-[#13385E] text-white shadow' : 'text-slate-600 hover:bg-slate-100'}`}
-          >
-            {tr(PERIOD_LABEL[k])}
-          </button>
-        ))}
-      </div>
+      <Segmented
+        value={value}
+        onChange={onChange}
+        label={tr('period_label')}
+        options={(Object.keys(PERIOD_LABEL) as PeriodKey[]).map((k) => ({ key: k, label: tr(PERIOD_LABEL[k]) }))}
+      />
       <span className="text-xs text-slate-500">{days[0].date} → {days[days.length - 1].date}</span>
     </div>
   );

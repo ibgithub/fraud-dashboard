@@ -68,12 +68,13 @@ export interface DayRow {
 export const DAILY: DayRow[] = (() => {
   const r = rng(20260501);
   const out: DayRow[] = [];
-  const d0 = new Date('2026-05-01T00:00:00');
+  // Work in UTC so the calendar date never shifts with the browser time zone.
+  const d0 = Date.UTC(2026, 4, 1);
   for (let i = 0; i < 61; i++) {
-    const d = new Date(d0.getTime() + i * 86400000);
-    const dow = d.getDay();
+    const d = new Date(d0 + i * 86400000);
+    const dow = d.getUTCDay();
     const weekend = dow === 0 || dow === 6;
-    const payday = d.getDate() >= 25 || d.getDate() <= 2;
+    const payday = d.getUTCDate() >= 25 || d.getUTCDate() <= 2;
     const txn = Math.round((weekend ? 1900 : 2450) * (payday ? 1.12 : 1) * (0.9 + r() * 0.2));
     const alerts = Math.max(4, Math.round(txn * (0.0045 + r() * 0.0022)));
     const high = Math.max(0, Math.round(alerts * (0.14 + r() * 0.14)));
@@ -173,7 +174,6 @@ export const TOP_CASES: CaseRow[] = [
 
 // ---- model health / review progress ---------------------------------------------
 export const HEALTH = { driftStatus: 'warning' as 'stable' | 'warning' | 'drifted' };
-export const REVIEW_SHARE = 0.28; // share of alerts already reviewed by analysts
 
 // ---- executive insights (keys map to text in text.ts) ----------------------------
 export const INSIGHT_TONE: Record<string, 'info' | 'ok' | 'warn' | 'danger'> = {
@@ -200,7 +200,8 @@ export interface StreamTxn {
 }
 
 export const STREAM_TOTAL = 71893; // June 2026 (test window), real size
-export const STREAM_START = new Date('2026-06-01T00:03:00');
+// Wall-clock start of the replay, kept in UTC so the formatted string is exactly 2026-06-01 00:03.
+export const STREAM_START_MS = Date.UTC(2026, 5, 1, 0, 3, 0);
 
 const CUST_POOL = Array.from({ length: 240 }, (_, i) => `C${((i * 2654435761) >>> 0).toString(16).toUpperCase().padStart(8, '0').slice(0, 7)}`);
 
@@ -215,7 +216,7 @@ export function streamTxn(index: number): StreamTxn {
   const category = pick(r, SEGMENTS.filter((s) => s !== 'OTHER'));
   const base = category === 'TOPUP' ? 150000 : category === 'QRIS' ? 85000 : category === 'EWALLET' ? 200000 : 450000;
   const amount = Math.round((base * (0.3 + r() * 1.8) * (flagged ? 1 + r() * 6 : 1)) / 1000) * 1000;
-  const ts = new Date(STREAM_START.getTime() + index * 36_000 + Math.floor(r() * 30_000));
+  const ts = new Date(STREAM_START_MS + index * 36_000 + Math.floor(r() * 30_000));
   const types = TYPE_SHARE.map((x) => x.type);
   return {
     index,
